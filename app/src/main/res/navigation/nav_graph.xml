@@ -11,20 +11,16 @@
         android:label="fragment_all_todo"
         tools:layout="@layout/fragment_all_todo" >
         <action
-            android:id="@+id/action_allTodoFragment_to_addTaskFragment"
-            app:destination="@id/addTaskFragment" />
-        <action
             android:id="@+id/action_allTodoFragment_to_addTodoFragment"
             app:destination="@id/addTodoFragment" />
     </fragment>
     <fragment
-        android:id="@+id/addTaskFragment"
-        android:name="com.example.to_doapp.ui.addtask.AddTaskFragment"
-        android:label="fragment_add_task"
-        tools:layout="@layout/fragment_add_task" />
-    <fragment
         android:id="@+id/addTodoFragment"
         android:name="com.example.to_doapp.ui.addtodo.AddTodoFragment"
         android:label="fragment_add_todo"
-        tools:layout="@layout/fragment_add_todo" />
+        tools:layout="@layout/fragment_add_todo" >
+        <argument
+            android:name="todoItem"
+            app:argType="com.example.to_doapp.data.TodoItem" />
+    </fragment>
 </navigation>

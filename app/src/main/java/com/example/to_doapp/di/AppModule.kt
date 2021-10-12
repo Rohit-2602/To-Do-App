@@ -2,7 +2,6 @@ package com.example.to_doapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.to_doapp.db.TaskDao
 import com.example.to_doapp.db.TodoDao
 import com.example.to_doapp.db.TodoDatabase
 import dagger.Module
@@ -27,10 +26,5 @@ object AppModule {
     @Singleton
     fun getTodoDao(todoDatabase: TodoDatabase) : TodoDao =
         todoDatabase.getTodoDao()
-
-    @Provides
-    @Singleton
-    fun getTaskDao(todoDatabase: TodoDatabase) : TaskDao =
-        todoDatabase.getTaskDao()
 
 }

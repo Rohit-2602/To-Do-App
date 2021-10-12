@@ -1,11 +1,10 @@
 package com.example.to_doapp.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-@Entity(tableName = "task_table")
-class Task(
-    @PrimaryKey
-    var id: Int? = 0,
-    var title: String
-)
+@Parcelize
+data class Task(
+    var title: String,
+    var isCompleted: Boolean = false
+) : Parcelable
