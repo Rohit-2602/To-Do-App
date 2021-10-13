@@ -20,18 +20,18 @@ import com.example.to_doapp.databinding.FragmentAddTodoBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddTodoFragment : Fragment(R.layout.fragment_add_todo) {
+class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
 
     private var _binding: FragmentAddTodoBinding? = null
     private val binding get() = _binding!!
-    private val addTodoViewModel by viewModels<AddTodoViewModel>()
-    private val navArgs : AddTodoFragmentArgs by navArgs()
+    private val addTodoViewModel by viewModels<AddEditTodoViewModel>()
+    private val addEditTodoFragmentArgs : AddEditTodoFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAddTodoBinding.bind(view)
 
-        val todoItem = navArgs.todoItem
+        val todoItem = addEditTodoFragmentArgs.todoItem
 
         getSubTasks(todoItem)
 
@@ -70,6 +70,8 @@ class AddTodoFragment : Fragment(R.layout.fragment_add_todo) {
     private fun getSubTasks(todoItem: TodoItem) {
         for (i in todoItem.tasks.indices) {
 
+            val subTask = todoItem.tasks[i]
+
             val inflater = LayoutInflater.from(requireContext())
                 .inflate(R.layout.item_add_sub_task, null)
             binding.subTaskRoot.addView(inflater)
@@ -80,7 +82,8 @@ class AddTodoFragment : Fragment(R.layout.fragment_add_todo) {
             val subTaskCheckbox = view?.findViewById<CheckBox>(R.id.sub_task_checkbox)
             val subTaskSort = view?.findViewById<ImageView>(R.id.sub_task_sort)
 
-            subTaskTitle?.setText(todoItem.tasks[i].title)
+            subTaskTitle?.setText(subTask.title)
+            subTaskCheckbox?.isChecked = subTask.isCompleted
         }
     }
 

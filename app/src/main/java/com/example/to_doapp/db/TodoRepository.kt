@@ -3,7 +3,7 @@ package com.example.to_doapp.db
 import com.example.to_doapp.data.TodoItem
 import javax.inject.Inject
 
-class AppRepository @Inject constructor(private val todoDao: TodoDao) {
+class TodoRepository @Inject constructor(private val todoDao: TodoDao) {
 
     suspend fun addTodo(todoItem: TodoItem) = todoDao.addTodo(todoItem)
 

@@ -16,7 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask, SubTaskComplete {
+class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
 
     private var _binding: FragmentAllTodoBinding? = null
     private val binding get() = _binding!!
@@ -28,7 +28,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask, SubTa
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAllTodoBinding.bind(view)
 
-        allTodoAdapter = AllTodoAdapter(this, this)
+        allTodoAdapter = AllTodoAdapter(this)
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
         bottomSheetBehavior.isDraggable = false
 
@@ -76,7 +76,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask, SubTa
 
     }
 
-    override fun checkboxClicked(todoItem: TodoItem, position: Int, isChecked: Boolean) {
+    override fun updateSubTaskCompletion(todoItem: TodoItem, position: Int, isChecked: Boolean) {
         allTodoViewModel.onTaskCheckedChanged(todoItem, position, isChecked)
     }
 

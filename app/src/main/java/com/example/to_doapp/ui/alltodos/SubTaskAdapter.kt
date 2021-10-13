@@ -2,15 +2,13 @@ package com.example.to_doapp.ui.alltodos
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.ItemTaskBinding
-import com.example.to_doapp.utils.Comparators
 
-class SubTaskAdapter(private val todoItem: TodoItem, private val listener: SubTaskComplete) :
-    ListAdapter<Task, SubTaskAdapter.SubTaskViewHolder>(Comparators.SUBTASK_COMPARATOR) {
+class SubTaskAdapter(private val todoItem: TodoItem, private val listener: AddEditTask) :
+    RecyclerView.Adapter<SubTaskAdapter.SubTaskViewHolder>() {
 
     inner class SubTaskViewHolder(private val binding: ItemTaskBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -18,6 +16,7 @@ class SubTaskAdapter(private val todoItem: TodoItem, private val listener: SubTa
             binding.apply {
                 taskTitle.isChecked = subTask.isCompleted
                 taskTitle.text = subTask.title
+                taskTitle.paint.isStrikeThruText = subTask.isCompleted
             }
         }
     }
@@ -26,17 +25,18 @@ class SubTaskAdapter(private val todoItem: TodoItem, private val listener: SubTa
         val binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val subTaskViewHolder = SubTaskViewHolder(binding)
         binding.taskTitle.setOnClickListener {
-            listener.checkboxClicked(todoItem, subTaskViewHolder.adapterPosition, binding.taskTitle.isChecked)
+            listener.updateSubTaskCompletion(todoItem, subTaskViewHolder.adapterPosition, binding.taskTitle.isChecked)
+            notifyItemChanged(subTaskViewHolder.adapterPosition)
         }
         return subTaskViewHolder
     }
 
     override fun onBindViewHolder(holder: SubTaskViewHolder, position: Int) {
-        val subTask = getItem(position)
+        val subTask = todoItem.tasks[position]
         holder.bindSubTask(subTask)
     }
-}
 
-interface SubTaskComplete {
-    fun checkboxClicked(todoItem: TodoItem, position: Int, isChecked: Boolean)
+    override fun getItemCount(): Int {
+        return todoItem.tasks.size
+    }
 }
