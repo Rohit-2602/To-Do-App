@@ -1,35 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/todo_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/todo_root"
+    android:background="@color/light_black"
     android:fillViewport="true"
-    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.addtodo.AddEditTodoFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/save_todo_button"
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/add_todo_toolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/save"
-            android:layout_margin="10dp"
-            android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="@color/black"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/back_button"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_back"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
+
+                <Button
+                    android:id="@+id/save_todo_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:text="@string/save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.appcompat.widget.Toolbar>
 
         <EditText
             android:id="@+id/todo_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:background="@color/dark_gray"
             android:padding="10dp"
-            android:background="@color/light_blue"
-            app:layout_constraintTop_toBottomOf="@+id/save_todo_button" />
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/add_todo_toolbar"
+            tools:text="Demo Text"
+            tools:ignore="Autofill,LabelFor,TextFields" />
 
         <LinearLayout
             android:id="@+id/sub_task_root"
@@ -38,23 +69,21 @@
             android:layout_margin="10dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/add_sub_task_button"
-            app:layout_constraintTop_toBottomOf="@+id/todo_title">
-        </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/todo_title" />
 
         <Button
             android:id="@+id/add_sub_task_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_add"
-            android:text="@string/add_sub_task"
             android:layout_margin="10dp"
-            android:textAlignment="textStart"
+            android:backgroundTint="@color/light_blue"
+            android:drawableLeft="@drawable/ic_add"
             android:padding="10dp"
-            android:textSize="16sp"
-            style="?android:attr/borderlessButtonStyle"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/light_blue"
+            android:text="@string/add_sub_task"
+            android:textAlignment="textStart"
             android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

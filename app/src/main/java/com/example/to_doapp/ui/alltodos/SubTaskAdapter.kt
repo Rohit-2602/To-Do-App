@@ -28,6 +28,12 @@ class SubTaskAdapter(private val todoItem: TodoItem, private val listener: AddEd
             listener.updateSubTaskCompletion(todoItem, subTaskViewHolder.adapterPosition, binding.taskTitle.isChecked)
             notifyItemChanged(subTaskViewHolder.adapterPosition)
         }
+        binding.taskRemove.setOnClickListener {
+            val tasks = todoItem.tasks.toMutableList()
+            tasks.removeAt(subTaskViewHolder.adapterPosition)
+            listener.removeSubTask(todoItem.id!!, tasks)
+            notifyItemChanged(subTaskViewHolder.adapterPosition)
+        }
         return subTaskViewHolder
     }
 

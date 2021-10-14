@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.to_doapp.R
+import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.FragmentAllTodoBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -61,9 +62,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
             .addCallback(requireActivity(), object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                        binding.apply {
-                            hideBottomSheet()
-                        }
+                        hideBottomSheet()
                         return
                     }
                     if (isEnabled) {
@@ -78,6 +77,14 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
 
     override fun updateSubTaskCompletion(todoItem: TodoItem, position: Int, isChecked: Boolean) {
         allTodoViewModel.onTaskCheckedChanged(todoItem, position, isChecked)
+    }
+
+    override fun removeSubTask(todoItemId: Int, tasks: List<Task>) {
+        allTodoViewModel.updateTodoTasks(todoItemId, tasks)
+    }
+
+    override fun removeTodo(todoItem: TodoItem) {
+        allTodoViewModel.removeTodo(todoItem)
     }
 
     override fun addEditTask(todoItem: TodoItem) {

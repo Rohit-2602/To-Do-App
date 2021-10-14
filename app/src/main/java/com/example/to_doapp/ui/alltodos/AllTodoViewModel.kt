@@ -2,6 +2,7 @@ package com.example.to_doapp.ui.alltodos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.db.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,5 +25,14 @@ class AllTodoViewModel @Inject constructor(private val repository: TodoRepositor
             todoItem.tasks = tasks
             repository.updateTodo(todoItem)
         }
+
+    fun updateTodoTasks(todoItemId: Int, tasks: List<Task>) =
+        viewModelScope.launch {
+            repository.updateTodoTasks(todoItemId, tasks)
+        }
+
+    fun removeTodo(todoItem: TodoItem) = viewModelScope.launch {
+        repository.removeTodo(todoItem)
+    }
 
 }

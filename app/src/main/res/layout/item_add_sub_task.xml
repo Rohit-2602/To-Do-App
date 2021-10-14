@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
     android:layout_marginTop="10dp"
+    android:background="@color/dark_gray"
     android:layout_height="wrap_content">
 
     <CheckBox
@@ -28,6 +29,7 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textSize="18sp"
+        android:textColor="@color/white"
         android:background="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/sub_task_sort"
         app:layout_constraintStart_toEndOf="@+id/sub_task_checkbox"

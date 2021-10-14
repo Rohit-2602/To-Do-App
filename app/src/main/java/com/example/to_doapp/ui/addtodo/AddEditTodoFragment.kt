@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -32,18 +33,28 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
         _binding = FragmentAddTodoBinding.bind(view)
 
         val todoItem = addEditTodoFragmentArgs.todoItem
+        val mainActivity = activity as AppCompatActivity
+        mainActivity.setSupportActionBar(binding.addTodoToolbar)
 
         getSubTasks(todoItem)
 
         binding.apply {
-            val subTasks = ArrayList<Task>()
+
+            backButton.setOnClickListener {
+                findNavController().navigateUp()
+            }
+
             saveTodoButton.setOnClickListener {
+                val subTasks = ArrayList<Task>()
                 for (i in 0 until binding.subTaskRoot.childCount) {
                     val subTaskLayout = binding.subTaskRoot.getChildAt(i)
+
                     val editText = subTaskLayout.findViewById<EditText>(R.id.sub_task_title)
+                    val subTaskCheckbox = subTaskLayout.findViewById<CheckBox>(R.id.sub_task_checkbox)
+
                     val taskTitle = editText.text.trim().toString()
                     if (taskTitle.isNotEmpty()) {
-                        val task = Task(editText.text.toString())
+                        val task = Task(title = taskTitle, isCompleted = subTaskCheckbox.isChecked)
                         subTasks.add(task)
                     }
                 }
@@ -76,14 +87,20 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
                 .inflate(R.layout.item_add_sub_task, null)
             binding.subTaskRoot.addView(inflater)
 
-            val view = binding.subTaskRoot.getChildAt(i)
+            val view = binding.subTaskRoot.getChildAt(i)!!
 
-            val subTaskTitle = view?.findViewById<EditText>(R.id.sub_task_title)
-            val subTaskCheckbox = view?.findViewById<CheckBox>(R.id.sub_task_checkbox)
-            val subTaskSort = view?.findViewById<ImageView>(R.id.sub_task_sort)
+            val subTaskTitle = view.findViewById<EditText>(R.id.sub_task_title)
+            val subTaskCheckbox = view.findViewById<CheckBox>(R.id.sub_task_checkbox)
+            val subTaskSort = view.findViewById<ImageView>(R.id.sub_task_sort)
 
-            subTaskTitle?.setText(subTask.title)
-            subTaskCheckbox?.isChecked = subTask.isCompleted
+            subTaskTitle.setText(subTask.title)
+            subTaskTitle.paint.isStrikeThruText = subTask.isCompleted
+            subTaskCheckbox.isChecked = subTask.isCompleted
+
+            subTaskCheckbox.setOnCheckedChangeListener { compoundButton, isChecked ->
+                subTaskTitle.paint.isStrikeThruText = isChecked
+            }
+
         }
     }
 
