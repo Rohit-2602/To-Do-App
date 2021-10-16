@@ -1,6 +1,7 @@
 package com.example.to_doapp.ui.alltodos
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -15,6 +16,7 @@ import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.FragmentAllTodoBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
@@ -24,6 +26,14 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
     private val allTodoViewModel by viewModels<AllTodoViewModel>()
     private lateinit var allTodoAdapter: AllTodoAdapter
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
+
+    private val calendar = Calendar.getInstance()
+
+    private var mDay = calendar.get(Calendar.DAY_OF_MONTH)
+    private var mMonth = calendar.get(Calendar.MONTH)
+    private var mYear = calendar.get(Calendar.YEAR)
+
+    private var dueDate = calendar.time
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,9 +48,12 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                     showBottomSheet()
                 } else {
-                    val todoItem = TodoItem(title = todoTitle.text.trim().toString())
+                    val todoItem = TodoItem(title = todoTitle.text.trim().toString(), dueDate = dueDate)
                     allTodoViewModel.addTodo(todoItem)
                 }
+            }
+            todoCalendar.setOnClickListener {
+                showDialogPicker()
             }
             screen.setOnClickListener {
                 hideBottomSheet()
@@ -73,6 +86,18 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
             }
             )
 
+    }
+
+    private fun showDialogPicker() {
+        val dialogPicker = DatePickerDialog(requireContext(),
+            { _, year, month, day ->
+                val newDate = Calendar.getInstance()
+                newDate.set(year, month, day)
+                dueDate = Date(newDate.timeInMillis)
+            },
+        mYear, mMonth, mDay)
+        dialogPicker.datePicker.minDate = calendar.timeInMillis
+        dialogPicker.show()
     }
 
     override fun updateSubTaskCompletion(todoItem: TodoItem, position: Int, isChecked: Boolean) {

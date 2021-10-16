@@ -1,91 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/todo_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_black"
-    android:fillViewport="true"
     tools:context=".ui.addtodo.AddEditTodoFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/add_todo_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/add_todo_toolbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/back_button"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
 
-                <ImageView
-                    android:id="@+id/back_button"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/ic_back"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="ContentDescription" />
+            <Button
+                android:id="@+id/save_todo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/black"
+                android:text="@string/save"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <Button
-                    android:id="@+id/save_todo_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/black"
-                    android:text="@string/save"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
 
-        </androidx.appcompat.widget.Toolbar>
+    <EditText
+        android:id="@+id/todo_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/dark_gray"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_todo_toolbar"
+        tools:ignore="Autofill,LabelFor,TextFields"
+        tools:text="Demo Text" />
 
-        <EditText
-            android:id="@+id/todo_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@color/dark_gray"
-            android:padding="10dp"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/add_todo_toolbar"
-            tools:text="Demo Text"
-            tools:ignore="Autofill,LabelFor,TextFields" />
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/add_sub_task_button"
+        app:layout_constraintTop_toBottomOf="@+id/todo_title">
 
         <LinearLayout
             android:id="@+id/sub_task_root"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="10dp"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/add_sub_task_button"
             app:layout_constraintTop_toBottomOf="@+id/todo_title" />
 
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/add_sub_task_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/light_blue"
+        android:drawableLeft="@drawable/ic_add"
+        android:padding="10dp"
+        android:text="@string/add_sub_task"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/todo_date" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/todo_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent">
+
         <Button
-            android:id="@+id/add_sub_task_button"
-            android:layout_width="match_parent"
+            android:id="@+id/button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/light_blue"
-            android:drawableLeft="@drawable/ic_add"
-            android:padding="10dp"
-            android:text="@string/add_sub_task"
+            android:backgroundTint="@color/white"
+            android:clickable="false"
+            android:drawableLeft="@drawable/ic_calendar"
+            android:text="Due Date"
             android:textAlignment="textStart"
             android:textAllCaps="false"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/todo_date_textview"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/todo_date_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/light_blue"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2021/10/15" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -49,7 +49,8 @@
         app:layout_anchor="@+id/bottom_sheet"
         app:layout_anchorGravity="top|end"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="ContentDescription" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/bottom_sheet"
@@ -58,17 +59,43 @@
         android:background="@drawable/shape_rectangle_corner"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
+        android:backgroundTint="@color/light_black"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
-        <EditText
-            android:id="@+id/todo_title"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/shape_rectangle_all_cornered"
-            android:hint="Input New Task Here"
-            android:padding="10dp"
-            android:textSize="20sp" />
+            android:layout_height="match_parent"
+            android:paddingBottom="20dp">
+
+            <EditText
+                android:id="@+id/todo_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/shape_rectangle_all_cornered"
+                android:hint="Input New Task Here"
+                android:padding="20dp"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textColorHint="@color/white"
+                android:backgroundTint="@color/dark_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/todo_calendar"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/todo_title"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_calendar"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
 
