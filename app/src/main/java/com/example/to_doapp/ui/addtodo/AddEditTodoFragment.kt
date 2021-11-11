@@ -93,8 +93,9 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
                     .inflate(R.layout.item_add_sub_task, null)
                 binding.subTaskRoot.addView(inflater)
 
-                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+                inflater.requestFocus()
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm!!.showSoftInput(inflater.findViewById(R.id.sub_task_title), InputMethodManager.SHOW_IMPLICIT)
             }
             todoTitle.setText(todoItem.title)
         }
@@ -144,9 +145,13 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
             subTaskTitle.paint.isStrikeThruText = subTask.isCompleted
             subTaskCheckbox.isChecked = subTask.isCompleted
 
-//            subTaskCheckbox.setOnCheckedChangeListener { compoundButton, isChecked ->
-//                subTaskTitle.paint.isStrikeThruText = isChecked
-//            }
+            subTaskCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                subTaskTitle.paint.isStrikeThruText = isChecked
+                // Showing Keyboard just to Update editText strikeThrough - will find better solution
+                subTaskTitle.requestFocus()
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm!!.showSoftInput(subTaskTitle, InputMethodManager.SHOW_IMPLICIT)
+            }
 
         }
     }

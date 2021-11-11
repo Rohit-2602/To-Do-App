@@ -51,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:background="@color/dark_gray"
+        android:minHeight="48dp"
         android:padding="10dp"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,10 +62,12 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fillViewport="true"
         android:layout_margin="10dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/add_sub_task_button"
-        app:layout_constraintTop_toBottomOf="@+id/todo_title">
+        app:layout_constraintTop_toBottomOf="@+id/todo_title"
+        tools:ignore="SpeakableTextPresentCheck"
+        tools:layout_editor_absoluteX="10dp">
 
         <LinearLayout
             android:id="@+id/sub_task_root"
