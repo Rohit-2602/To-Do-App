@@ -2,19 +2,16 @@ package com.example.to_doapp.ui.addtodo
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.CheckBox
-import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.to_doapp.R
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
@@ -24,12 +21,16 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
+class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged {
 
     private var _binding: FragmentAddTodoBinding? = null
     private val binding get() = _binding!!
     private val addTodoViewModel by viewModels<AddEditTodoViewModel>()
-    private val addEditTodoFragmentArgs : AddEditTodoFragmentArgs by navArgs()
+    private val addEditTodoFragmentArgs: AddEditTodoFragmentArgs by navArgs()
+    private lateinit var addEditTodoAdapter: AddTodoAdapter
+
+    private lateinit var todoItem: TodoItem
+    val tasks: MutableList<Task> = ArrayList()
 
     private val calendar = Calendar.getInstance()
 
@@ -43,11 +44,22 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAddTodoBinding.bind(view)
 
-        val todoItem = addEditTodoFragmentArgs.todoItem
+        todoItem = addEditTodoFragmentArgs.todoItem
+        tasks.addAll(todoItem.tasks)
+
         val mainActivity = activity as AppCompatActivity
         mainActivity.setSupportActionBar(binding.addTodoToolbar)
 
-        getSubTasks(todoItem)
+        addEditTodoAdapter = AddTodoAdapter(this)
+
+        binding.subTaskRecyclerview.apply {
+            adapter = addEditTodoAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+
+        addTodoViewModel.getTodoById(todoItem.id!!).observe(viewLifecycleOwner) {
+            addEditTodoAdapter.submitList(it.tasks as List<Task>)
+        }
 
         binding.apply {
 
@@ -64,47 +76,77 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
             }
 
             backButton.setOnClickListener {
+                updateTodoTasks()
                 findNavController().navigateUp()
             }
 
             saveTodoButton.setOnClickListener {
-                val subTasks = ArrayList<Task>()
-                for (i in 0 until binding.subTaskRoot.childCount) {
-                    val subTaskLayout = binding.subTaskRoot.getChildAt(i)
-
-                    val editText = subTaskLayout.findViewById<EditText>(R.id.sub_task_title)
-                    val subTaskCheckbox = subTaskLayout.findViewById<CheckBox>(R.id.sub_task_checkbox)
-
-                    val taskTitle = editText.text.trim().toString()
-                    if (taskTitle.isNotEmpty()) {
-                        val task = Task(title = taskTitle, isCompleted = subTaskCheckbox.isChecked)
-                        subTasks.add(task)
-                    }
-                }
-                todoItem.title = todoTitle.text.toString()
-                todoItem.tasks = subTasks
-                todoItem.dueDate = dueDate
-                addTodoViewModel.addTodo(todoItem)
+                // Nothing Changed bcoz updating item happen in realtime
+                updateTodoTasks()
                 findNavController().navigateUp()
             }
+
             addSubTaskButton.setOnClickListener {
-
-                val inflater = LayoutInflater.from(requireContext())
-                    .inflate(R.layout.item_add_sub_task, null)
-                binding.subTaskRoot.addView(inflater)
-
-                inflater.requestFocus()
-                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm!!.showSoftInput(inflater.findViewById(R.id.sub_task_title), InputMethodManager.SHOW_IMPLICIT)
+                tasks.add(Task(id = tasks.size, title = ""))
+                addTodoViewModel.updateTodoItem(todoItem, tasks)
             }
             todoTitle.setText(todoItem.title)
         }
 
+        // Back Button Pressed
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(requireActivity(), object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    var index = 0
+                    val subTasks: MutableList<Task> = ArrayList()
+                    subTasks.addAll(tasks)
+                    tasks.forEach { task ->
+                        if (task.title == "") {
+                            subTasks.remove(task)
+                        } else {
+                            task.id = index++
+                        }
+                    }
+                    addTodoViewModel.updateTodoItem(todoItem, subTasks)
+                    if (isEnabled) {
+                        isEnabled = false
+                        requireActivity().onBackPressed()
+                    }
+                }
+            }
+            )
+
+    }
+
+    override fun onTitleChanged(subTask: Task, subTaskList: List<Task>) {
+        tasks.clear()
+        tasks.addAll(subTaskList)
+        addTodoViewModel.updateTodoItem(todoItem = addEditTodoFragmentArgs.todoItem, subTaskList)
+    }
+
+    override fun onCompletedChanged(position: Int, isCompleted: Boolean) {
+        addTodoViewModel.onTaskCheckedChanged(todoItem, position, isCompleted)
+    }
+
+    private fun updateTodoTasks() {
+        var index = 0
+        val subTasks: MutableList<Task> = ArrayList()
+        subTasks.addAll(tasks)
+        tasks.forEach { task ->
+            if (task.title == "") {
+                subTasks.remove(task)
+            } else {
+                task.id = index++
+            }
+        }
+        addTodoViewModel.updateTodoItem(todoItem, subTasks)
     }
 
     @SuppressLint("SetTextI18n")
     private fun setDateTimeField() {
-        val datePickerDialog = DatePickerDialog(requireContext(),
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
             { _, year, month, day ->
                 val newDate = Calendar.getInstance()
                 newDate.set(year, month, day)
@@ -120,40 +162,10 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo) {
 
                 binding.todoDateTextview.text = "$newDay/$monthNumber/$newYear"
             },
-        mYear, mMonth, mDay)
+            mYear, mMonth, mDay
+        )
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
-    }
-
-    @SuppressLint("InflateParams")
-    private fun getSubTasks(todoItem: TodoItem) {
-        for (i in todoItem.tasks.indices) {
-
-            val subTask = todoItem.tasks[i]
-
-            val inflater = LayoutInflater.from(requireContext())
-                .inflate(R.layout.item_add_sub_task, null)
-            binding.subTaskRoot.addView(inflater)
-
-            val view = binding.subTaskRoot.getChildAt(i)!!
-
-            val subTaskTitle = view.findViewById<EditText>(R.id.sub_task_title)
-            val subTaskCheckbox = view.findViewById<CheckBox>(R.id.sub_task_checkbox)
-//            val subTaskSort = view.findViewById<ImageView>(R.id.sub_task_sort)
-
-            subTaskTitle.setText(subTask.title)
-            subTaskTitle.paint.isStrikeThruText = subTask.isCompleted
-            subTaskCheckbox.isChecked = subTask.isCompleted
-
-            subTaskCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                subTaskTitle.paint.isStrikeThruText = isChecked
-                // Showing Keyboard just to Update editText strikeThrough - will find better solution
-                subTaskTitle.requestFocus()
-                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm!!.showSoftInput(subTaskTitle, InputMethodManager.SHOW_IMPLICIT)
-            }
-
-        }
     }
 
     override fun onDestroy() {

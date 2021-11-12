@@ -13,6 +13,6 @@ data class TodoItem(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
     var title: String? = "",
-    var tasks: List<Task> = ArrayList(),
+    var tasks: MutableList<Task> = ArrayList(),
     var dueDate: Date
 ): Parcelable

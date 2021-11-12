@@ -15,6 +15,8 @@ class TodoRepository @Inject constructor(private val todoDao: TodoDao) {
 
     suspend fun removeTodo(todoItem: TodoItem) = todoDao.removeTodo(todoItem)
 
+    fun getTodoById(todoItemId: Int) = todoDao.getTodoById(todoItemId)
+
     fun getAllTodos() = todoDao.getAllTodos()
 
 }

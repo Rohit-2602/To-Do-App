@@ -20,6 +20,9 @@ interface TodoDao {
     @Delete
     suspend fun removeTodo(todoItem: TodoItem)
 
+    @Query("SELECT * from todo_table WHERE id = :todoId")
+    fun getTodoById(todoId: Int): LiveData<TodoItem>
+
     @Query("SELECT * from todo_table")
     fun getAllTodos(): LiveData<List<TodoItem>>
 

@@ -11,13 +11,13 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/add_todo_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?actionBarSize"
         android:background="@color/black"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/back_button"
@@ -59,25 +59,36 @@
         tools:ignore="Autofill,LabelFor,TextFields"
         tools:text="Demo Text" />
 
-    <androidx.core.widget.NestedScrollView
+<!--    <androidx.core.widget.NestedScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:fillViewport="true"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/add_sub_task_button"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/todo_title"-->
+<!--        tools:ignore="SpeakableTextPresentCheck"-->
+<!--        tools:layout_editor_absoluteX="10dp">-->
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/sub_task_root"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/add_sub_task_button"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/todo_title" />-->
+
+<!--    </androidx.core.widget.NestedScrollView>-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sub_task_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="10dp"
-        android:fillViewport="true"
+        tools:listitem="@layout/item_add_sub_task"
         app:layout_constraintBottom_toTopOf="@+id/add_sub_task_button"
-        app:layout_constraintTop_toBottomOf="@+id/todo_title"
-        tools:ignore="SpeakableTextPresentCheck"
-        tools:layout_editor_absoluteX="10dp">
-
-        <LinearLayout
-            android:id="@+id/sub_task_root"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/add_sub_task_button"
-            app:layout_constraintTop_toBottomOf="@+id/todo_title" />
-
-    </androidx.core.widget.NestedScrollView>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/todo_title" />
 
     <Button
         android:id="@+id/add_sub_task_button"
