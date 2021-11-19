@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
+import java.sql.Time
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -14,5 +15,6 @@ data class TodoItem(
     var id: Int? = null,
     var title: String? = "",
     var tasks: MutableList<Task> = ArrayList(),
-    var dueDate: Date
+    var dueDate: Date,
+    var remainderTime: Time
 ): Parcelable

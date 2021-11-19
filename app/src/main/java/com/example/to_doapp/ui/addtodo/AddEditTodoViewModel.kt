@@ -7,6 +7,8 @@ import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.db.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.sql.Time
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,6 +18,14 @@ class AddEditTodoViewModel @Inject constructor(private val todoRepository: TodoR
 
     fun updateTodoItem(todoItem: TodoItem, subTasks: List<Task>) = viewModelScope.launch {
         todoRepository.updateTodoTasks(todoItem.id!!, subTasks)
+    }
+
+    fun updateTodoTime(todoItemId: Int, remainderTime: Time) = viewModelScope.launch {
+        todoRepository.updateTodoTime(todoItemId, remainderTime)
+    }
+
+    fun updateTodoDueDate(todoItemId: Int, dueDate: Date) = viewModelScope.launch {
+        todoRepository.updateTodoDueDate(todoItemId, dueDate)
     }
 
     fun onTaskCheckedChanged(todoItem: TodoItem, position: Int, isChecked: Boolean) =

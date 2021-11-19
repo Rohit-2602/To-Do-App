@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
+import java.sql.Time
+import java.util.*
 
 @Dao
 interface TodoDao {
@@ -16,6 +18,12 @@ interface TodoDao {
 
     @Query("UPDATE todo_table SET tasks =:tasks WHERE id = :todoItemId")
     suspend fun updateTodoTasks(todoItemId: Int, tasks: List<Task>)
+
+    @Query("UPDATE todo_table SET remainderTime = :remainderTime WHERE id = :todoItemId")
+    suspend fun updateTodoTime(todoItemId: Int, remainderTime: Time)
+
+    @Query("UPDATE todo_table SET dueDate = :dueDate WHERE id = :todoItemId")
+    suspend fun updateTodoDueDate(todoItemId: Int, dueDate: Date)
 
     @Delete
     suspend fun removeTodo(todoItem: TodoItem)

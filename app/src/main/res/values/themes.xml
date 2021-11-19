@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.ToDoApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/light_blue</item>
         <item name="colorPrimaryVariant">@color/light_black</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -12,5 +12,16 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:timePickerStyle">@style/MyTimePicker</item>
     </style>
+
+    <style name="MyTimePicker" parent="android:Widget.Material.Light.TimePicker">
+        <item name="android:headerBackground">@color/light_black</item>
+        <item name="android:numbersTextColor">@color/white</item>
+        <item name="android:numbersSelectorColor">@color/light_blue</item>
+        <item name="android:numbersBackgroundColor">@color/light_black</item>
+        <item name="android:background">@color/light_black</item>
+        <item name="android:numbersInnerTextColor" tools:ignore="NewApi">@color/white</item>
+    </style>
+
 </resources>

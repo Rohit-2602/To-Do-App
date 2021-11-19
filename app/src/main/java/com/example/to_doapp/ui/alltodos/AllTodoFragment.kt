@@ -15,7 +15,9 @@ import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.FragmentAllTodoBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.sql.Time
 import java.util.*
 
 @AndroidEntryPoint
@@ -48,8 +50,14 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                     showBottomSheet()
                 } else {
-                    val todoItem = TodoItem(title = todoTitle.text.trim().toString(), dueDate = dueDate)
-                    allTodoViewModel.addTodo(todoItem)
+                    if(todoTitle.text.toString().trim().isNotEmpty()) {
+                        val todoItem = TodoItem(title = todoTitle.text.trim().toString(), dueDate = dueDate, remainderTime = Time(System.currentTimeMillis()))
+                        allTodoViewModel.addTodo(todoItem)
+                        todoTitle.setText("")
+                    }
+                    else {
+                        Snackbar.make(view, "Task can't be Empty!!", Snackbar.LENGTH_SHORT).show()
+                    }
                 }
             }
             todoCalendar.setOnClickListener {
@@ -66,6 +74,12 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         }
 
         allTodoViewModel.allTodos.observe(viewLifecycleOwner) {
+            if(it.isEmpty()) {
+                binding.noTaskTextview.visibility = View.VISIBLE
+            }
+            else {
+                binding.noTaskTextview.visibility = View.GONE
+            }
             allTodoAdapter.submitList(it)
         }
 
@@ -135,8 +149,8 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 

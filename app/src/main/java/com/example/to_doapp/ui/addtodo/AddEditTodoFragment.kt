@@ -1,7 +1,12 @@
 package com.example.to_doapp.ui.addtodo
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
+import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.View
@@ -16,6 +21,8 @@ import com.example.to_doapp.R
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.FragmentAddTodoBinding
+import com.example.to_doapp.receiver.AlarmReceiver
+import com.example.to_doapp.utils.Util
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import kotlin.collections.ArrayList
@@ -32,11 +39,6 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
     private lateinit var todoItem: TodoItem
     val tasks: MutableList<Task> = ArrayList()
 
-    private val calendar = Calendar.getInstance()
-
-    private var mDay = calendar.get(Calendar.DAY_OF_MONTH)
-    private var mMonth = calendar.get(Calendar.MONTH)
-    private var mYear = calendar.get(Calendar.YEAR)
     private lateinit var dueDate: Date
 
     @SuppressLint("SetTextI18n", "InflateParams")
@@ -70,9 +72,14 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
             dueDate = todoItem.dueDate
 
             todoDateTextview.text = "$day/$monthNumber/$year"
+            todoTimeTextview.text = Util.formattedTime(todoItem.remainderTime.hours, todoItem.remainderTime.minutes)
 
             todoDate.setOnClickListener {
-                setDateTimeField()
+                setDateField()
+            }
+
+            todoTime.setOnClickListener {
+                setTimeField()
             }
 
             backButton.setOnClickListener {
@@ -81,7 +88,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
             }
 
             saveTodoButton.setOnClickListener {
-                // Nothing Changed bcoz updating item happen in realtime
+                // Nothing Changed because updating item happen in realtime
                 updateTodoTasks()
                 findNavController().navigateUp()
             }
@@ -143,8 +150,39 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
         addTodoViewModel.updateTodoItem(todoItem, subTasks)
     }
 
+    private fun setTimeField() {
+
+        val timePickerListener =
+            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                val calendar = Calendar.getInstance()
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                calendar.set(Calendar.MINUTE, minute)
+                calendar.set(Calendar.SECOND, 0)
+
+                binding.todoTimeTextview.text = Util.formattedTime(hourOfDay, minute)
+                todoItem.remainderTime.hours = hourOfDay
+                todoItem.remainderTime.minutes = minute
+                addTodoViewModel.updateTodoTime(todoItem.id!!, todoItem.remainderTime)
+                setAlarm(calendar)
+            }
+
+        TimePickerDialog(
+            requireContext(),
+            timePickerListener,
+            12, 10, true
+        ).show()
+
+    }
+
     @SuppressLint("SetTextI18n")
-    private fun setDateTimeField() {
+    private fun setDateField() {
+
+        val calendar = Calendar.getInstance()
+
+        var mDay = calendar.get(Calendar.DAY_OF_MONTH)
+        var mMonth = calendar.get(Calendar.MONTH)
+        var mYear = calendar.get(Calendar.YEAR)
+
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, year, month, day ->
@@ -161,6 +199,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 val newYear = DateFormat.format("yyyy", dueDate)
 
                 binding.todoDateTextview.text = "$newDay/$monthNumber/$newYear"
+                addTodoViewModel.updateTodoDueDate(todoItem.id!!, dueDate)
             },
             mYear, mMonth, mDay
         )
@@ -168,8 +207,16 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
         datePickerDialog.show()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun setAlarm(calendar: Calendar) {
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        intent.putExtra("todoTitle", todoItem.title)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id!!, intent, 0)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 
