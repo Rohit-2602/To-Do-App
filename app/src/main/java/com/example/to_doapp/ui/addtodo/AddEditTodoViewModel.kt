@@ -1,11 +1,14 @@
 package com.example.to_doapp.ui.addtodo
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.db.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import java.sql.Time
 import java.util.*
@@ -16,7 +19,12 @@ class AddEditTodoViewModel @Inject constructor(private val todoRepository: TodoR
 
     fun getTodoById(todoItemId: Int) = todoRepository.getTodoById(todoItemId)
 
-    fun updateTodoItem(todoItem: TodoItem, subTasks: List<Task>) = viewModelScope.launch {
+    fun getTodoList(todoItemId: Int) = getTodoById(todoItemId).flatMapLatest {
+        val taskFlow = MutableStateFlow(it.tasks)
+        taskFlow
+    }.asLiveData()
+
+    fun updateTodoTasks(todoItem: TodoItem, subTasks: List<Task>) = viewModelScope.launch {
         todoRepository.updateTodoTasks(todoItem.id!!, subTasks)
     }
 
@@ -32,8 +40,7 @@ class AddEditTodoViewModel @Inject constructor(private val todoRepository: TodoR
         viewModelScope.launch {
             val tasks = todoItem.tasks
             tasks[position].isCompleted = isChecked
-            todoItem.tasks = tasks
-            todoRepository.updateTodo(todoItem)
+            todoRepository.updateTodoTasks(todoItemId = todoItem.id!!, tasks = tasks)
         }
 
     fun addTodo(todoItem: TodoItem) = viewModelScope.launch {

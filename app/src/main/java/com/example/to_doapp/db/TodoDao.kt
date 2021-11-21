@@ -1,9 +1,9 @@
 package com.example.to_doapp.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
+import kotlinx.coroutines.flow.Flow
 import java.sql.Time
 import java.util.*
 
@@ -15,6 +15,9 @@ interface TodoDao {
 
     @Update
     suspend fun updateTodo(todoItem: TodoItem)
+
+    @Query("UPDATE todo_table SET title =:title WHERE id = :todoItemId")
+    suspend fun updateTodoTitle(todoItemId: Int, title: String)
 
     @Query("UPDATE todo_table SET tasks =:tasks WHERE id = :todoItemId")
     suspend fun updateTodoTasks(todoItemId: Int, tasks: List<Task>)
@@ -29,9 +32,9 @@ interface TodoDao {
     suspend fun removeTodo(todoItem: TodoItem)
 
     @Query("SELECT * from todo_table WHERE id = :todoId")
-    fun getTodoById(todoId: Int): LiveData<TodoItem>
+    fun getTodoById(todoId: Int): Flow<TodoItem>
 
     @Query("SELECT * from todo_table")
-    fun getAllTodos(): LiveData<List<TodoItem>>
+    fun getAllTodos(): Flow<List<TodoItem>>
 
 }

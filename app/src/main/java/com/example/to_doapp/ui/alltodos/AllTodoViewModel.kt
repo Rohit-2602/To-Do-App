@@ -1,6 +1,7 @@
 package com.example.to_doapp.ui.alltodos
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
@@ -16,7 +17,7 @@ class AllTodoViewModel @Inject constructor(private val repository: TodoRepositor
         repository.addTodo(todoItem)
     }
 
-    val allTodos = repository.getAllTodos()
+    val allTodos = repository.getAllTodos().asLiveData()
 
     fun onTaskCheckedChanged(todoItem: TodoItem, position: Int, isChecked: Boolean) =
         viewModelScope.launch {

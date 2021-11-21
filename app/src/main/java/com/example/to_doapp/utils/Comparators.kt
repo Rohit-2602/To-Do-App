@@ -18,7 +18,7 @@ object Comparators {
 
     val SUBTASK_COMPARATOR = object : DiffUtil.ItemCallback<Task>() {
         override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
-            return oldItem.title == newItem.title
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {

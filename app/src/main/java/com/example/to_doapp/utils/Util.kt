@@ -1,5 +1,8 @@
 package com.example.to_doapp.utils
 
+import android.text.format.DateFormat
+import java.util.*
+
 object Util {
 
     fun formattedTime(hourOfDay: Int, minute: Int) : String {
@@ -34,6 +37,14 @@ object Util {
             }
         }
         return formattedTime
+    }
+
+    fun formatDate(dueDate: Date): String {
+        val newDay = DateFormat.format("dd", dueDate)
+        val monthNumber = DateFormat.format("MM", dueDate)
+        val newYear = DateFormat.format("yyyy", dueDate)
+
+        return "$newDay/$monthNumber/$newYear"
     }
 
 }

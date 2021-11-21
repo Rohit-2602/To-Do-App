@@ -8,12 +8,12 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,9 +37,10 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
     private lateinit var addEditTodoAdapter: AddTodoAdapter
 
     private lateinit var todoItem: TodoItem
-    val tasks: MutableList<Task> = ArrayList()
+    var tasks: MutableList<Task> = ArrayList()
 
     private lateinit var dueDate: Date
+    private val alarmCalendar = Calendar.getInstance()
 
     @SuppressLint("SetTextI18n", "InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,6 +49,9 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
 
         todoItem = addEditTodoFragmentArgs.todoItem
         tasks.addAll(todoItem.tasks)
+
+        dueDate = todoItem.dueDate
+        alarmCalendar.time = dueDate
 
         val mainActivity = activity as AppCompatActivity
         mainActivity.setSupportActionBar(binding.addTodoToolbar)
@@ -59,19 +63,18 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        addTodoViewModel.getTodoById(todoItem.id!!).observe(viewLifecycleOwner) {
-            addEditTodoAdapter.submitList(it.tasks as List<Task>)
+        addTodoViewModel.getTodoById(todoItem.id!!).asLiveData().observe(viewLifecycleOwner) {
+            todoItem = it
+            tasks = it.tasks
+        }
+
+        addTodoViewModel.getTodoList(todoItem.id!!).observe(viewLifecycleOwner) {
+            addEditTodoAdapter.submitList(it)
         }
 
         binding.apply {
 
-            val day = DateFormat.format("dd", todoItem.dueDate)
-            val monthNumber = DateFormat.format("MM", todoItem.dueDate)
-            val year = DateFormat.format("yyyy", todoItem.dueDate)
-
-            dueDate = todoItem.dueDate
-
-            todoDateTextview.text = "$day/$monthNumber/$year"
+            todoDateTextview.text = Util.formatDate(dueDate = dueDate)
             todoTimeTextview.text = Util.formattedTime(todoItem.remainderTime.hours, todoItem.remainderTime.minutes)
 
             todoDate.setOnClickListener {
@@ -95,7 +98,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
 
             addSubTaskButton.setOnClickListener {
                 tasks.add(Task(id = tasks.size, title = ""))
-                addTodoViewModel.updateTodoItem(todoItem, tasks)
+                addTodoViewModel.updateTodoTasks(todoItem, tasks)
             }
             todoTitle.setText(todoItem.title)
         }
@@ -105,17 +108,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
             .onBackPressedDispatcher
             .addCallback(requireActivity(), object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    var index = 0
-                    val subTasks: MutableList<Task> = ArrayList()
-                    subTasks.addAll(tasks)
-                    tasks.forEach { task ->
-                        if (task.title == "") {
-                            subTasks.remove(task)
-                        } else {
-                            task.id = index++
-                        }
-                    }
-                    addTodoViewModel.updateTodoItem(todoItem, subTasks)
+                    updateTodoTasks()
                     if (isEnabled) {
                         isEnabled = false
                         requireActivity().onBackPressed()
@@ -126,10 +119,9 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
 
     }
 
-    override fun onTitleChanged(subTask: Task, subTaskList: List<Task>) {
-        tasks.clear()
-        tasks.addAll(subTaskList)
-        addTodoViewModel.updateTodoItem(todoItem = addEditTodoFragmentArgs.todoItem, subTaskList)
+    override fun onTitleChanged(position: Int, newTitle: String) {
+        tasks[position].title = newTitle
+        addTodoViewModel.updateTodoTasks(todoItem = addEditTodoFragmentArgs.todoItem, tasks)
     }
 
     override fun onCompletedChanged(position: Int, isCompleted: Boolean) {
@@ -147,14 +139,14 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 task.id = index++
             }
         }
-        addTodoViewModel.updateTodoItem(todoItem, subTasks)
+        addTodoViewModel.updateTodoTasks(todoItem, subTasks)
     }
 
     private fun setTimeField() {
 
         val timePickerListener =
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-                val calendar = Calendar.getInstance()
+                val calendar = alarmCalendar
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 calendar.set(Calendar.MINUTE, minute)
                 calendar.set(Calendar.SECOND, 0)
@@ -193,12 +185,9 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 mMonth = newDate.get(Calendar.MONTH)
                 mYear = newDate.get(Calendar.YEAR)
 
+                alarmCalendar.time = dueDate
                 dueDate = Date(newDate.timeInMillis)
-                val newDay = DateFormat.format("dd", dueDate)
-                val monthNumber = DateFormat.format("MM", dueDate)
-                val newYear = DateFormat.format("yyyy", dueDate)
-
-                binding.todoDateTextview.text = "$newDay/$monthNumber/$newYear"
+                binding.todoDateTextview.text = Util.formatDate(dueDate = dueDate)
                 addTodoViewModel.updateTodoDueDate(todoItem.id!!, dueDate)
             },
             mYear, mMonth, mDay
