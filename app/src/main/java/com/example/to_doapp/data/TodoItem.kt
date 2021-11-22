@@ -12,9 +12,19 @@ import kotlin.collections.ArrayList
 @Entity(tableName = "todo_table")
 data class TodoItem(
     @PrimaryKey(autoGenerate = true)
-    var id: Int? = null,
+    var id: Int = 0,
     var title: String? = "",
+    var createdAt: Long = System.currentTimeMillis(),
     var tasks: MutableList<Task> = ArrayList(),
     var dueDate: Date,
-    var remainderTime: Time
+    var remainderTime: Time,
+    var completed: Boolean = false,
+    var important: Boolean = false
 ): Parcelable
+
+// Used in AllTodoFragment to filter TodoItem
+enum class Filter {
+    ALL,
+    COMPLETED,
+    IMPORTANT
+}

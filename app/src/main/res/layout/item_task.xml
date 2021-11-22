@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="15dp">
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/task_title"
@@ -11,9 +12,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="10dp"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
         android:paddingLeft="10dp"
         android:textColor="@color/white"
         android:textSize="16sp"
+        android:buttonTint="@color/white"
+        style="@style/TodoCompletedCheckbox"
         app:layout_constraintEnd_toStartOf="@+id/task_remove"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

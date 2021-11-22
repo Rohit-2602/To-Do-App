@@ -2,4 +2,13 @@
     <string name="app_name">To-Do App</string>
     <string name="add_sub_task">Add Sub-Task</string>
     <string name="save">Save</string>
+    <string name="no_task_all">No task in this category \n Click + to create new task.</string>
+    <string name="no_task_completed">No Task in this category</string>
+    <string name="no_task_important">No Task in this category</string>
+    <string name="important">Important</string>
+    <string name="completed">Completed</string>
+    <string name="all">All</string>
+    <string name="add_task">Add Task</string>
+    <string name="create">Create</string>
+    <string name="input_new_task_here">Input New Task Here</string>
 </resources>

@@ -20,13 +20,46 @@
             app:title="To-Do App"
             app:titleTextColor="@color/white" />
 
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            app:layout_constraintTop_toBottomOf="@id/all_todo_toolbar"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/all_todo_chip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/all" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/completed_todo_chip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/completed" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/important_todo_chip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/important" />
+
+        </com.google.android.material.chip.ChipGroup>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/all_todo_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
+            android:overScrollMode="never"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/all_todo_toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/chip_group"
             tools:listitem="@layout/item_todo" />
 
         <TextView
@@ -34,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="No task left \n Click + to create new task."
+            android:text="@string/no_task_all"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:visibility="gone"
@@ -54,27 +87,33 @@
         android:background="@color/black"
         android:visibility="gone" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/add_todo_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/light_blue"
-        android:src="@drawable/ic_add"
-        app:layout_anchor="@+id/bottom_sheet"
-        app:layout_anchorGravity="top|end"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/light_black"
+        android:drawableLeft="@drawable/ic_add"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="@string/add_task"
+        android:textAllCaps="false"
+        app:cornerRadius="50dp"
+        app:layout_anchor="@id/bottom_sheet"
+        app:layout_anchorGravity="top|center"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/shape_rectangle_corner"
+        android:backgroundTint="@color/light_black"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
-        android:backgroundTint="@color/light_black"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -88,27 +127,41 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/shape_rectangle_all_cornered"
-                android:hint="Input New Task Here"
-                android:padding="20dp"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textColorHint="@color/white"
                 android:backgroundTint="@color/dark_gray"
+                android:hint="@string/input_new_task_here"
+                android:padding="15dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="Autofill,TextFields" />
 
             <ImageView
                 android:id="@+id/todo_calendar"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:padding="5dp"
+                android:src="@drawable/ic_calendar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/todo_title"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/todo_alarm"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:src="@drawable/ic_calendar"/>
+                android:padding="5dp"
+                android:src="@drawable/ic_clock"
+                app:layout_constraintStart_toEndOf="@id/todo_calendar"
+                app:layout_constraintTop_toBottomOf="@id/todo_title"
+                tools:ignore="ContentDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

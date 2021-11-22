@@ -25,7 +25,7 @@ class AddEditTodoViewModel @Inject constructor(private val todoRepository: TodoR
     }.asLiveData()
 
     fun updateTodoTasks(todoItem: TodoItem, subTasks: List<Task>) = viewModelScope.launch {
-        todoRepository.updateTodoTasks(todoItem.id!!, subTasks)
+        todoRepository.updateTodoTasks(todoItem.id, subTasks)
     }
 
     fun updateTodoTime(todoItemId: Int, remainderTime: Time) = viewModelScope.launch {
@@ -40,7 +40,7 @@ class AddEditTodoViewModel @Inject constructor(private val todoRepository: TodoR
         viewModelScope.launch {
             val tasks = todoItem.tasks
             tasks[position].isCompleted = isChecked
-            todoRepository.updateTodoTasks(todoItemId = todoItem.id!!, tasks = tasks)
+            todoRepository.updateTodoTasks(todoItemId = todoItem.id, tasks = tasks)
         }
 
     fun addTodo(todoItem: TodoItem) = viewModelScope.launch {

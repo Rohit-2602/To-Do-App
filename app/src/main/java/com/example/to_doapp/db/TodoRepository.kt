@@ -12,6 +12,12 @@ class TodoRepository @Inject constructor(private val todoDao: TodoDao) {
 
     suspend fun updateTodo(todoItem: TodoItem) = todoDao.updateTodo(todoItem)
 
+    suspend fun updateTodoChecked(todoItemId: Int, completed: Boolean) =
+        todoDao.updateTodoChecked(todoItemId, completed)
+
+    suspend fun updateTodoImportant(todoItemId: Int, important: Boolean) =
+        todoDao.updateTodoImportant(todoItemId, important)
+
     suspend fun updateTodoTasks(todoItemId: Int, tasks: List<Task>) =
         todoDao.updateTodoTasks(todoItemId, tasks)
 

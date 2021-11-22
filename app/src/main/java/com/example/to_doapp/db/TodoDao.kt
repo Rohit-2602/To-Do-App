@@ -19,6 +19,12 @@ interface TodoDao {
     @Query("UPDATE todo_table SET title =:title WHERE id = :todoItemId")
     suspend fun updateTodoTitle(todoItemId: Int, title: String)
 
+    @Query("UPDATE todo_table SET completed = :completed WHERE id = :todoItemId")
+    suspend fun updateTodoChecked(todoItemId: Int, completed: Boolean)
+
+    @Query("UPDATE todo_table SET important = :important WHERE id = :todoItemId")
+    suspend fun updateTodoImportant(todoItemId: Int, important: Boolean)
+
     @Query("UPDATE todo_table SET tasks =:tasks WHERE id = :todoItemId")
     suspend fun updateTodoTasks(todoItemId: Int, tasks: List<Task>)
 
@@ -34,7 +40,7 @@ interface TodoDao {
     @Query("SELECT * from todo_table WHERE id = :todoId")
     fun getTodoById(todoId: Int): Flow<TodoItem>
 
-    @Query("SELECT * from todo_table")
+    @Query("SELECT * from todo_table ORDER BY important DESC, createdAt")
     fun getAllTodos(): Flow<List<TodoItem>>
 
 }

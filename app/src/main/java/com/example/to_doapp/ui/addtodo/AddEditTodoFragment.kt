@@ -37,7 +37,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
     private lateinit var addEditTodoAdapter: AddTodoAdapter
 
     private lateinit var todoItem: TodoItem
-    var tasks: MutableList<Task> = ArrayList()
+    val tasks: MutableList<Task> = ArrayList()
 
     private lateinit var dueDate: Date
     private val alarmCalendar = Calendar.getInstance()
@@ -63,19 +63,20 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        addTodoViewModel.getTodoById(todoItem.id!!).asLiveData().observe(viewLifecycleOwner) {
+        addTodoViewModel.getTodoById(todoItem.id).asLiveData().observe(viewLifecycleOwner) {
             todoItem = it
-            tasks = it.tasks
+            tasks.clear()
+            tasks.addAll(it.tasks)
         }
 
-        addTodoViewModel.getTodoList(todoItem.id!!).observe(viewLifecycleOwner) {
+        addTodoViewModel.getTodoList(todoItem.id).observe(viewLifecycleOwner) {
             addEditTodoAdapter.submitList(it)
         }
 
         binding.apply {
 
             todoDateTextview.text = Util.formatDate(dueDate = dueDate)
-            todoTimeTextview.text = Util.formattedTime(todoItem.remainderTime.hours, todoItem.remainderTime.minutes)
+            todoTimeTextview.text = Util.formatTime(todoItem.remainderTime.time)
 
             todoDate.setOnClickListener {
                 setDateField()
@@ -151,10 +152,10 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 calendar.set(Calendar.MINUTE, minute)
                 calendar.set(Calendar.SECOND, 0)
 
-                binding.todoTimeTextview.text = Util.formattedTime(hourOfDay, minute)
                 todoItem.remainderTime.hours = hourOfDay
                 todoItem.remainderTime.minutes = minute
-                addTodoViewModel.updateTodoTime(todoItem.id!!, todoItem.remainderTime)
+                binding.todoTimeTextview.text = Util.formatTime(todoItem.remainderTime.time)
+                addTodoViewModel.updateTodoTime(todoItem.id, todoItem.remainderTime)
                 setAlarm(calendar)
             }
 
@@ -188,7 +189,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 alarmCalendar.time = dueDate
                 dueDate = Date(newDate.timeInMillis)
                 binding.todoDateTextview.text = Util.formatDate(dueDate = dueDate)
-                addTodoViewModel.updateTodoDueDate(todoItem.id!!, dueDate)
+                addTodoViewModel.updateTodoDueDate(todoItem.id, dueDate)
             },
             mYear, mMonth, mDay
         )
@@ -200,7 +201,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
         intent.putExtra("todoTitle", todoItem.title)
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id!!, intent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id, intent, 0)
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
 

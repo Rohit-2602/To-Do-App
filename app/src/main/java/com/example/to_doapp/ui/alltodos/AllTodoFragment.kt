@@ -1,19 +1,31 @@
 package com.example.to_doapp.ui.alltodos
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
+import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateFormat
+import android.view.Gravity
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.to_doapp.R
+import com.example.to_doapp.data.Filter
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.FragmentAllTodoBinding
+import com.example.to_doapp.receiver.AlarmReceiver
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +47,9 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
     private var mMonth = calendar.get(Calendar.MONTH)
     private var mYear = calendar.get(Calendar.YEAR)
 
+    private val alarmCalendar = Calendar.getInstance()
     private var dueDate = calendar.time
+    private var remainderTime = Time(System.currentTimeMillis())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,15 +59,37 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
         bottomSheetBehavior.isDraggable = false
 
+        allTodoViewModel.todoList.asLiveData().observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                binding.noTaskTextview.visibility = View.VISIBLE
+                binding.allTodoRecyclerview.visibility = View.GONE
+            }
+            else {
+                binding.noTaskTextview.visibility = View.GONE
+                binding.allTodoRecyclerview.visibility = View.VISIBLE
+                allTodoAdapter.submitList(it)
+            }
+        }
+
+        allTodoViewModel.todoFilter.asLiveData().observe(viewLifecycleOwner) { filter ->
+            when(filter) {
+                Filter.ALL -> binding.noTaskTextview.text = requireContext().resources.getString(R.string.no_task_all)
+                Filter.COMPLETED -> binding.noTaskTextview.text = requireContext().resources.getString(R.string.no_task_completed)
+                Filter.IMPORTANT -> binding.noTaskTextview.text = requireContext().resources.getString(R.string.no_task_important)
+                else -> requireContext().resources.getString(R.string.no_task_completed)
+            }
+        }
+
         binding.apply {
             addTodoButton.setOnClickListener {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                     showBottomSheet()
                 } else {
                     if(todoTitle.text.toString().trim().isNotEmpty()) {
-                        val todoItem = TodoItem(title = todoTitle.text.trim().toString(), dueDate = dueDate, remainderTime = Time(System.currentTimeMillis()))
+                        val todoItem = TodoItem(title = todoTitle.text.trim().toString(), dueDate = dueDate, remainderTime = remainderTime)
                         allTodoViewModel.addTodo(todoItem)
                         todoTitle.setText("")
+                        dueDate = calendar.time
                     }
                     else {
                         Snackbar.make(view, "Task can't be Empty!!", Snackbar.LENGTH_SHORT).show()
@@ -61,11 +97,29 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                 }
             }
             todoCalendar.setOnClickListener {
-                showDialogPicker()
+                setDueDate(null)
+            }
+            todoAlarm.setOnClickListener {
+                setTimeField(null)
             }
             screen.setOnClickListener {
                 hideBottomSheet()
             }
+
+            binding.chipGroup.setOnCheckedChangeListener { _, checkedId ->
+                when (checkedId) {
+                    R.id.all_todo_chip -> {
+                        allTodoViewModel.todoFilter.value = Filter.ALL
+                    }
+                    R.id.completed_todo_chip -> {
+                        allTodoViewModel.todoFilter.value = Filter.COMPLETED
+                    }
+                    R.id.important_todo_chip -> {
+                        allTodoViewModel.todoFilter.value = Filter.IMPORTANT
+                    }
+                }
+            }
+
         }
 
         binding.allTodoRecyclerview.apply {
@@ -73,15 +127,22 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        allTodoViewModel.allTodos.observe(viewLifecycleOwner) {
-            if(it.isEmpty()) {
-                binding.noTaskTextview.visibility = View.VISIBLE
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
+        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
             }
-            else {
-                binding.noTaskTextview.visibility = View.GONE
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val todoItem = allTodoAdapter.currentList[viewHolder.adapterPosition]
+                allTodoViewModel.removeTodo(todoItem)
+                showUndoSnackBar(todoItem)
             }
-            allTodoAdapter.submitList(it)
-        }
+        }).attachToRecyclerView(binding.allTodoRecyclerview)
 
         // Using BackPressed in Fragment
         requireActivity()
@@ -102,16 +163,99 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
 
     }
 
-    private fun showDialogPicker() {
-        val dialogPicker = DatePickerDialog(requireContext(),
+    private fun showUndoSnackBar(todoItem: TodoItem) {
+        val snackBar = Snackbar.make(binding.addTodoButton, "${todoItem.title} Removed", Snackbar.LENGTH_SHORT)
+            .setAction("UNDO") {
+                allTodoViewModel.addTodo(todoItem)
+            }
+        snackBar.anchorView = binding.addTodoButton
+        snackBar.show()
+    }
+
+    private fun setDueDate(todoItem: TodoItem?) {
+        if (todoItem != null) {
+            mYear = DateFormat.format("yyyy", todoItem.dueDate).toString().toInt()
+            mMonth = DateFormat.format("MM", todoItem.dueDate).toString().toInt()-1
+            mDay = DateFormat.format("dd", todoItem.dueDate).toString().toInt()
+        }
+        else {
+            mDay = calendar.get(Calendar.DAY_OF_MONTH)
+            mMonth = calendar.get(Calendar.MONTH)
+            mYear = calendar.get(Calendar.YEAR)
+        }
+        val datePickerDialog = DatePickerDialog(requireContext(),
             { _, year, month, day ->
                 val newDate = Calendar.getInstance()
                 newDate.set(year, month, day)
+
                 dueDate = Date(newDate.timeInMillis)
+                alarmCalendar.time = dueDate
+                if (todoItem != null) {
+                    allTodoViewModel.updateTodoDueDate(todoItem.id, dueDate)
+                }
             },
-        mYear, mMonth, mDay)
-        dialogPicker.datePicker.minDate = calendar.timeInMillis
-        dialogPicker.show()
+            mYear, mMonth, mDay
+        )
+        datePickerDialog.datePicker.minDate = calendar.timeInMillis
+        datePickerDialog.show()
+    }
+
+    private fun setTimeField(todoItem: TodoItem?) {
+
+        val mCalendar = Calendar.getInstance()
+        var pickerHour = mCalendar.get(Calendar.HOUR_OF_DAY)
+        var pickerMinute = mCalendar.get(Calendar.MINUTE)
+        if (todoItem != null) {
+            pickerHour = todoItem.remainderTime.hours
+            pickerMinute = todoItem.remainderTime.minutes
+        }
+        val timePickerListener =
+            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                val calendar = alarmCalendar
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                calendar.set(Calendar.MINUTE, minute)
+                calendar.set(Calendar.SECOND, 0)
+
+                remainderTime = Time(hourOfDay, minute, 0)
+                if (todoItem != null) {
+                    todoItem.remainderTime.hours = hourOfDay
+                    todoItem.remainderTime.minutes = minute
+                    allTodoViewModel.updateTodoTime(todoItem.id, remainderTime)
+                    setAlarm(calendar, todoItem)
+                }
+
+            }
+
+        TimePickerDialog(
+            requireContext(),
+            timePickerListener,
+            pickerHour, pickerMinute, true
+        ).show()
+
+    }
+
+    private fun setAlarm(calendar: Calendar, todoItem: TodoItem) {
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        intent.putExtra("todoTitle", todoItem.title)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id, intent, 0)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+    }
+
+    private fun cancelAlarm(todoItem: TodoItem) {
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        intent.putExtra("todoTitle", todoItem.title)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id, intent, 0)
+        alarmManager.cancel(pendingIntent)
+    }
+
+    override fun updateTodoDate(todoItem: TodoItem) {
+        setDueDate(todoItem)
+    }
+
+    override fun updateTodoTime(todoItem: TodoItem) {
+        setTimeField(todoItem)
     }
 
     override fun updateSubTaskCompletion(todoItem: TodoItem, position: Int, isChecked: Boolean) {
@@ -126,16 +270,27 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         allTodoViewModel.removeTodo(todoItem)
     }
 
-    override fun addEditTask(todoItem: TodoItem) {
+    override fun editTodo(todoItem: TodoItem) {
         val action = AllTodoFragmentDirections.actionAllTodoFragmentToAddTodoFragment(todoItem)
         findNavController().navigate(action)
+    }
+
+    override fun completeTodo(todoItem: TodoItem, completed: Boolean) {
+        allTodoViewModel.updateTodoChecked(todoItem.id, completed)
+        cancelAlarm(todoItem)
+    }
+
+    override fun importantTodo(todoItem: TodoItem, important: Boolean) {
+        allTodoViewModel.updateTodoImportant(todoItem.id, important)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun showBottomSheet() {
         binding.apply {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            addTodoButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_submit))
+            addTodoButton.text = requireContext().resources.getString(R.string.create)
+            addTodoButton.gravity = Gravity.END
+            addTodoButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_submit, 0, 0, 0)
             screen.visibility = View.VISIBLE
         }
     }
@@ -144,8 +299,9 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
     private fun hideBottomSheet() {
         binding.apply {
             screen.visibility = View.GONE
+            addTodoButton.text = requireContext().resources.getString(R.string.add_task)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            addTodoButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_add))
+            addTodoButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add, 0, 0, 0)
         }
     }
 

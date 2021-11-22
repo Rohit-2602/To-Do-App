@@ -31,7 +31,7 @@ class SubTaskAdapter(private val todoItem: TodoItem, private val listener: AddEd
         binding.taskRemove.setOnClickListener {
             val tasks = todoItem.tasks.toMutableList()
             tasks.removeAt(subTaskViewHolder.adapterPosition)
-            listener.removeSubTask(todoItem.id!!, tasks)
+            listener.removeSubTask(todoItem.id, tasks)
             notifyItemChanged(subTaskViewHolder.adapterPosition)
         }
         return subTaskViewHolder
