@@ -276,8 +276,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
     }
 
     override fun editTodo(todoItem: TodoItem) {
-        val action = AllTodoFragmentDirections.actionAllTodoFragmentToAddEditTodoFragmentNew(todoItem)
-//        val action = AllTodoFragmentDirections.actionAllTodoFragmentToAddTodoFragment(todoItem)
+        val action = AllTodoFragmentDirections.actionAllTodoFragmentToAddEditTodoFragment(todoItem)
         findNavController().navigate(action)
     }
 

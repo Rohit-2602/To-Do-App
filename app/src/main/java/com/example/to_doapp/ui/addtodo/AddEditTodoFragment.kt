@@ -8,6 +8,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -122,11 +123,10 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
 
     override fun onTitleChanged(position: Int, newTitle: String) {
         tasks[position].title = newTitle
-        addTodoViewModel.updateTodoTasks(todoItem = addEditTodoFragmentArgs.todoItem, tasks)
     }
 
     override fun onCompletedChanged(position: Int, isCompleted: Boolean) {
-        addTodoViewModel.onTaskCheckedChanged(todoItem, position, isCompleted)
+        addTodoViewModel.onTaskCheckedChanged(todoItem, position, isCompleted, tasks)
     }
 
     private fun updateTodoTasks() {
@@ -145,24 +145,26 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
 
     private fun setTimeField() {
 
+        val pickerHour = todoItem.remainderTime.toInt() / 3600
+        val pickerMinute = todoItem.remainderTime.toInt() - pickerHour * 3600
+
         val timePickerListener =
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-                val calendar = alarmCalendar
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(Calendar.MINUTE, minute)
-                calendar.set(Calendar.SECOND, 0)
+                alarmCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                alarmCalendar.set(Calendar.MINUTE, minute)
+                alarmCalendar.set(Calendar.SECOND, 0)
 
-                todoItem.remainderTime = calendar.timeInMillis
+                todoItem.remainderTime = alarmCalendar.timeInMillis
 
                 binding.todoTimeTextview.text = Util.formatTime(todoItem.remainderTime)
                 addTodoViewModel.updateTodoTime(todoItem.id, todoItem.remainderTime)
-                setAlarm(calendar)
+                setAlarm(alarmCalendar)
             }
 
         TimePickerDialog(
             requireContext(),
             timePickerListener,
-            12, 10, true
+            pickerHour, pickerMinute, true
         ).show()
 
     }
@@ -172,9 +174,9 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
 
         val calendar = Calendar.getInstance()
 
-        var mDay = calendar.get(Calendar.DAY_OF_MONTH)
-        var mMonth = calendar.get(Calendar.MONTH)
-        var mYear = calendar.get(Calendar.YEAR)
+        val mYear = DateFormat.format("yyyy", todoItem.dueDate).toString().toInt()
+        val mMonth = DateFormat.format("MM", todoItem.dueDate).toString().toInt()-1
+        val mDay = DateFormat.format("dd", todoItem.dueDate).toString().toInt()
 
         val datePickerDialog = DatePickerDialog(
             requireContext(),
@@ -182,12 +184,11 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 val newDate = Calendar.getInstance()
                 newDate.set(year, month, day)
 
-                mDay = newDate.get(Calendar.DAY_OF_MONTH)
-                mMonth = newDate.get(Calendar.MONTH)
-                mYear = newDate.get(Calendar.YEAR)
-
-                alarmCalendar.time = dueDate
                 dueDate = Date(newDate.timeInMillis)
+                alarmCalendar.set(Calendar.YEAR, year)
+                alarmCalendar.set(Calendar.MONTH, month)
+                alarmCalendar.set(Calendar.DAY_OF_MONTH, day)
+
                 binding.todoDateTextview.text = Util.formatDate(dueDate = dueDate)
                 addTodoViewModel.updateTodoDueDate(todoItem.id, dueDate)
             },

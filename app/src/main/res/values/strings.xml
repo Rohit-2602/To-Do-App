@@ -12,4 +12,9 @@
     <string name="create">Create</string>
     <string name="input_new_task_here">Input New Task Here</string>
     <string name="today">Today</string>
+    <string name="save_todo">Save Todo</string>
+    <string name="no">No</string>
+    <string name="time_and_remainder"><![CDATA[Time & Remainder]]></string>
+    <string name="due_date">Due Date</string>
+    <string name="edit_task">Edit Task</string>
 </resources>

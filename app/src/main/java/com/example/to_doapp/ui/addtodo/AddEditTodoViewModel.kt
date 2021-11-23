@@ -35,9 +35,8 @@ class AddEditTodoViewModel @Inject constructor(private val todoRepository: TodoR
         todoRepository.updateTodoDueDate(todoItemId, dueDate)
     }
 
-    fun onTaskCheckedChanged(todoItem: TodoItem, position: Int, isChecked: Boolean) =
+    fun onTaskCheckedChanged(todoItem: TodoItem, position: Int, isChecked: Boolean, tasks: List<Task>) =
         viewModelScope.launch {
-            val tasks = todoItem.tasks
             tasks[position].isCompleted = isChecked
             todoRepository.updateTodoTasks(todoItemId = todoItem.id, tasks = tasks)
         }

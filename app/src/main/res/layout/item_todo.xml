@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/todo_constraint"
@@ -8,104 +8,111 @@
     android:layout_marginStart="10dp"
     android:layout_marginTop="10dp"
     android:layout_marginEnd="10dp"
-    android:background="@drawable/shape_rectangle_all_cornered"
-    android:backgroundTint="@color/dark_gray"
-    android:paddingBottom="10dp">
+    app:cardCornerRadius="10dp"
+    app:rippleColor="@color/light_black"
+    android:backgroundTint="@color/dark_gray">
 
-    <ImageView
-        android:id="@+id/todo_edit"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="15dp"
-        android:padding="3dp"
-        android:src="@drawable/ic_edit"
-        app:layout_constraintBottom_toBottomOf="@+id/todo_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/todo_title"
-        tools:ignore="ContentDescription" />
-
-    <TextView
-        android:id="@+id/todo_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="center_vertical"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/todo_edit"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Todo" />
-
-    <TextView
-        android:id="@+id/todo_date_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        android:drawableLeft="@drawable/ic_calendar"
-        android:drawablePadding="10dp"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/todo_title"
-        tools:text="12 October 2021" />
-
-    <TextView
-        android:id="@+id/todo_time_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:drawableLeft="@drawable/ic_clock"
-        android:drawablePadding="10dp"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/todo_date_textview"
-        tools:text="10 : 00" />
-
-    <CheckBox
-        android:id="@+id/todo_important_checkbox"
-        style="@style/TodoImportantCheckbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        android:buttonTint="@color/white"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:scaleX="1.1"
-        android:scaleY="1.1"
-        app:layout_constraintBottom_toBottomOf="@id/todo_time_textview"
-        app:layout_constraintEnd_toStartOf="@id/todo_completed_checkbox" />
-
-    <CheckBox
-        android:id="@+id/todo_completed_checkbox"
-        style="@style/TodoCompletedCheckbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        android:buttonTint="@color/white"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:scaleX="1.1"
-        android:scaleY="1.1"
-        app:layout_constraintBottom_toBottomOf="@id/todo_time_textview"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/sub_task_recyclerview"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="10dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/todo_time_textview"
-        tools:listitem="@layout/item_task" />
+        android:paddingBottom="10dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/todo_edit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="15dp"
+            android:padding="3dp"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="@+id/todo_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/todo_title"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/todo_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center_vertical"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/todo_edit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Todo" />
+
+        <TextView
+            android:id="@+id/todo_date_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:drawableLeft="@drawable/ic_calendar"
+            android:drawablePadding="10dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/todo_title"
+            tools:text="12 October 2021" />
+
+        <TextView
+            android:id="@+id/todo_time_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:drawableLeft="@drawable/ic_clock"
+            android:drawablePadding="10dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/todo_date_textview"
+            tools:text="10 : 00" />
+
+        <CheckBox
+            android:id="@+id/todo_important_checkbox"
+            style="@style/TodoImportantCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:buttonTint="@color/white"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:scaleX="1.1"
+            android:scaleY="1.1"
+            app:layout_constraintBottom_toBottomOf="@id/todo_time_textview"
+            app:layout_constraintEnd_toStartOf="@id/todo_completed_checkbox" />
+
+        <CheckBox
+            android:id="@+id/todo_completed_checkbox"
+            style="@style/TodoCompletedCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:buttonTint="@color/white"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:scaleX="1.1"
+            android:scaleY="1.1"
+            app:layout_constraintBottom_toBottomOf="@id/todo_time_textview"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sub_task_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/todo_time_textview"
+            tools:listitem="@layout/item_task" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
