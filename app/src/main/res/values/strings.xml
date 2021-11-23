@@ -11,4 +11,5 @@
     <string name="add_task">Add Task</string>
     <string name="create">Create</string>
     <string name="input_new_task_here">Input New Task Here</string>
+    <string name="today">Today</string>
 </resources>

@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.Gravity
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
@@ -29,7 +30,6 @@ import com.example.to_doapp.receiver.AlarmReceiver
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import java.sql.Time
 import java.util.*
 
 @AndroidEntryPoint
@@ -42,14 +42,9 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
 
     private val calendar = Calendar.getInstance()
-
-    private var mDay = calendar.get(Calendar.DAY_OF_MONTH)
-    private var mMonth = calendar.get(Calendar.MONTH)
-    private var mYear = calendar.get(Calendar.YEAR)
-
-    private val alarmCalendar = Calendar.getInstance()
+    private var alarmCalendar = Calendar.getInstance()
     private var dueDate = calendar.time
-    private var remainderTime = Time(System.currentTimeMillis())
+    private var remainderTime = System.currentTimeMillis()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,7 +54,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
         bottomSheetBehavior.isDraggable = false
 
-        allTodoViewModel.todoList.asLiveData().observe(viewLifecycleOwner) {
+        allTodoViewModel.todoList.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
                 binding.noTaskTextview.visibility = View.VISIBLE
                 binding.allTodoRecyclerview.visibility = View.GONE
@@ -88,8 +83,10 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                     if(todoTitle.text.toString().trim().isNotEmpty()) {
                         val todoItem = TodoItem(title = todoTitle.text.trim().toString(), dueDate = dueDate, remainderTime = remainderTime)
                         allTodoViewModel.addTodo(todoItem)
+                        setAlarm(todoItem)
                         todoTitle.setText("")
                         dueDate = calendar.time
+                        remainderTime = System.currentTimeMillis()
                     }
                     else {
                         Snackbar.make(view, "Task can't be Empty!!", Snackbar.LENGTH_SHORT).show()
@@ -173,15 +170,14 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
     }
 
     private fun setDueDate(todoItem: TodoItem?) {
+        var mDay = calendar.get(Calendar.DAY_OF_MONTH)
+        var mMonth = calendar.get(Calendar.MONTH)
+        var mYear = calendar.get(Calendar.YEAR)
+
         if (todoItem != null) {
             mYear = DateFormat.format("yyyy", todoItem.dueDate).toString().toInt()
             mMonth = DateFormat.format("MM", todoItem.dueDate).toString().toInt()-1
             mDay = DateFormat.format("dd", todoItem.dueDate).toString().toInt()
-        }
-        else {
-            mDay = calendar.get(Calendar.DAY_OF_MONTH)
-            mMonth = calendar.get(Calendar.MONTH)
-            mYear = calendar.get(Calendar.YEAR)
         }
         val datePickerDialog = DatePickerDialog(requireContext(),
             { _, year, month, day ->
@@ -189,9 +185,12 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                 newDate.set(year, month, day)
 
                 dueDate = Date(newDate.timeInMillis)
-                alarmCalendar.time = dueDate
+                alarmCalendar.set(Calendar.YEAR, year)
+                alarmCalendar.set(Calendar.MONTH, month)
+                alarmCalendar.set(Calendar.DAY_OF_MONTH, day)
                 if (todoItem != null) {
                     allTodoViewModel.updateTodoDueDate(todoItem.id, dueDate)
+                    setAlarm(todoItem)
                 }
             },
             mYear, mMonth, mDay
@@ -206,22 +205,19 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         var pickerHour = mCalendar.get(Calendar.HOUR_OF_DAY)
         var pickerMinute = mCalendar.get(Calendar.MINUTE)
         if (todoItem != null) {
-            pickerHour = todoItem.remainderTime.hours
-            pickerMinute = todoItem.remainderTime.minutes
+            pickerHour = todoItem.remainderTime.toInt() / 3600
+            pickerMinute = todoItem.remainderTime.toInt() - pickerHour * 3600
         }
         val timePickerListener =
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-                val calendar = alarmCalendar
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(Calendar.MINUTE, minute)
-                calendar.set(Calendar.SECOND, 0)
+                alarmCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                alarmCalendar.set(Calendar.MINUTE, minute)
+                alarmCalendar.set(Calendar.SECOND, 0)
 
-                remainderTime = Time(hourOfDay, minute, 0)
+                remainderTime = alarmCalendar.timeInMillis
                 if (todoItem != null) {
-                    todoItem.remainderTime.hours = hourOfDay
-                    todoItem.remainderTime.minutes = minute
                     allTodoViewModel.updateTodoTime(todoItem.id, remainderTime)
-                    setAlarm(calendar, todoItem)
+                    setAlarm(todoItem)
                 }
 
             }
@@ -234,14 +230,22 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
 
     }
 
-    private fun setAlarm(calendar: Calendar, todoItem: TodoItem) {
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private fun setAlarm(todoItem: TodoItem) {
+        val new = Calendar.getInstance()
+        if (alarmCalendar.timeInMillis < new.timeInMillis) {
+            Toast.makeText(requireContext(), "Alarm Calendar Less", Toast.LENGTH_SHORT).show()
+            return
+        }
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
         intent.putExtra("todoTitle", todoItem.title)
+        intent.putExtra("todoId", todoItem.id)
         val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id, intent, 0)
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun cancelAlarm(todoItem: TodoItem) {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
@@ -268,10 +272,12 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
 
     override fun removeTodo(todoItem: TodoItem) {
         allTodoViewModel.removeTodo(todoItem)
+        cancelAlarm(todoItem)
     }
 
     override fun editTodo(todoItem: TodoItem) {
-        val action = AllTodoFragmentDirections.actionAllTodoFragmentToAddTodoFragment(todoItem)
+        val action = AllTodoFragmentDirections.actionAllTodoFragmentToAddEditTodoFragmentNew(todoItem)
+//        val action = AllTodoFragmentDirections.actionAllTodoFragmentToAddTodoFragment(todoItem)
         findNavController().navigate(action)
     }
 

@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.to_doapp.R
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
-import com.example.to_doapp.databinding.FragmentAddTodoBinding
+import com.example.to_doapp.databinding.FragmentAddTodoNewBinding
 import com.example.to_doapp.receiver.AlarmReceiver
 import com.example.to_doapp.utils.Util
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,9 +28,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged {
+class AddEditTodoFragmentNew : Fragment(R.layout.fragment_add_todo_new), OnTaskChanged {
 
-    private var _binding: FragmentAddTodoBinding? = null
+    private var _binding: FragmentAddTodoNewBinding? = null
     private val binding get() = _binding!!
     private val addTodoViewModel by viewModels<AddEditTodoViewModel>()
     private val addEditTodoFragmentArgs: AddEditTodoFragmentArgs by navArgs()
@@ -45,7 +45,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
     @SuppressLint("SetTextI18n", "InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentAddTodoBinding.bind(view)
+        _binding = FragmentAddTodoNewBinding.bind(view)
 
         todoItem = addEditTodoFragmentArgs.todoItem
         tasks.addAll(todoItem.tasks)

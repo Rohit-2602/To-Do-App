@@ -1,6 +1,7 @@
 package com.example.to_doapp.ui.alltodos
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.to_doapp.data.Filter
 import com.example.to_doapp.data.Task
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.sql.Time
 import java.util.*
 import javax.inject.Inject
 
@@ -31,7 +31,7 @@ class AllTodoViewModel @Inject constructor(private val repository: TodoRepositor
     }
     val todoFilter = MutableStateFlow(Filter.ALL)
 
-    val todoList = todoFilter.flatMapLatest { filter ->
+    private val todoListFlow = todoFilter.flatMapLatest { filter ->
         when (filter) {
             Filter.ALL -> allTodos
             Filter.COMPLETED -> completedTodo
@@ -39,7 +39,9 @@ class AllTodoViewModel @Inject constructor(private val repository: TodoRepositor
         }
     }
 
-    fun updateTodoTime(todoItemId: Int, remainderTime: Time) = viewModelScope.launch {
+    val todoList = todoListFlow.asLiveData()
+
+    fun updateTodoTime(todoItemId: Int, remainderTime: Long) = viewModelScope.launch {
         repository.updateTodoTime(todoItemId, remainderTime)
     }
 

@@ -12,13 +12,18 @@ import androidx.core.app.NotificationManagerCompat
 import com.example.to_doapp.R
 import com.example.to_doapp.ui.MainActivity
 import com.example.to_doapp.utils.Constants
+import java.util.*
 
 class AlarmReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
+        val todoTitle = intent.getStringExtra("todoTitle")
+        val todoId = Random().nextInt(System.currentTimeMillis().toInt())
+//        val todoId = intent.getIntExtra("todoId", System.currentTimeMillis().toInt())
+
         val allTodoIntent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, allTodoIntent, PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(context, todoId, allTodoIntent, 0)
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -32,20 +37,17 @@ class AlarmReceiver: BroadcastReceiver() {
             manager.createNotificationChannel(channel)
         }
 
-        val text = intent.getStringExtra("todoTitle")
-
         val builder = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_clock)
             .setContentTitle("To-Do App")
-            .setContentText("Remainder for $text")
+            .setContentText("Remainder for $todoTitle")
             .setAutoCancel(true)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
 
         val notificationCompat = NotificationManagerCompat.from(context)
-        val notificationId = System.currentTimeMillis().toInt()
-        notificationCompat.notify(notificationId + 1, builder.build())
+        notificationCompat.notify(todoId, builder.build())
 
     }
 

@@ -22,7 +22,7 @@ class AllTodoAdapter(private val listener: AddEditTask):
             binding.apply {
                 todoTitle.text = todoItem.title
                 todoDateTextview.text = Util.formatDate(todoItem.dueDate)
-                todoTimeTextview.text = Util.formatTime(todoItem.remainderTime.time)
+                todoTimeTextview.text = Util.formatTime(todoItem.remainderTime)
                 todoCompletedCheckbox.isChecked = todoItem.completed
                 todoImportantCheckbox.isChecked = todoItem.important
             }
