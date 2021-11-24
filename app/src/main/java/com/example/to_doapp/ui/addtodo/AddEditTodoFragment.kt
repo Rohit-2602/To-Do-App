@@ -80,10 +80,12 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
             todoTimeTextview.text = Util.formatTime(todoItem.remainderTime)
 
             todoDate.setOnClickListener {
+                addTodoViewModel.updateTodoTasks(todoItem, tasks)
                 setDateField()
             }
 
             todoTime.setOnClickListener {
+                addTodoViewModel.updateTodoTasks(todoItem, tasks)
                 setTimeField()
             }
 
@@ -113,7 +115,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                     updateTodoTasks()
                     if (isEnabled) {
                         isEnabled = false
-                        requireActivity().onBackPressed()
+                        activity?.onBackPressed()
                     }
                 }
             }
@@ -127,6 +129,11 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
 
     override fun onCompletedChanged(position: Int, isCompleted: Boolean) {
         addTodoViewModel.onTaskCheckedChanged(todoItem, position, isCompleted, tasks)
+    }
+
+    override fun removeSubTask(position: Int) {
+        tasks.removeAt(position)
+        addTodoViewModel.updateTodoTasks(todoItem, tasks)
     }
 
     private fun updateTodoTasks() {

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.to_doapp.R
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.databinding.ItemAddSubTaskBinding
 import com.example.to_doapp.utils.Comparators.SUBTASK_COMPARATOR
@@ -32,6 +33,19 @@ class AddTodoAdapter(private val listener: OnTaskChanged) :
             subTaskCheckbox.setOnCheckedChangeListener { _, isChecked ->
                 listener.onCompletedChanged(addTodoViewHolder.adapterPosition, isChecked)
             }
+            subTaskTitle.setOnFocusChangeListener { _, focused ->
+                if (focused) {
+                    subTaskSort.background = null
+                    subTaskSort.setImageResource(R.drawable.ic_close)
+                    subTaskSort.setOnClickListener {
+                        listener.removeSubTask(addTodoViewHolder.adapterPosition)
+                    }
+                }
+                else {
+                    subTaskSort.background = null
+                    subTaskSort.setImageResource(R.drawable.ic_sort)
+                }
+            }
             subTaskTitle.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun onTextChanged(newText: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -54,4 +68,5 @@ class AddTodoAdapter(private val listener: OnTaskChanged) :
 interface OnTaskChanged {
     fun onTitleChanged(position: Int, newTitle: String)
     fun onCompletedChanged(position: Int, isCompleted: Boolean)
+    fun removeSubTask(position: Int)
 }
