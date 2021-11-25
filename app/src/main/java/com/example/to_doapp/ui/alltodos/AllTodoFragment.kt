@@ -179,7 +179,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
             mMonth = DateFormat.format("MM", todoItem.dueDate).toString().toInt()-1
             mDay = DateFormat.format("dd", todoItem.dueDate).toString().toInt()
         }
-        val datePickerDialog = DatePickerDialog(requireContext(),
+        val datePickerDialog = DatePickerDialog(requireContext(), R.style.MyDatePickerLight,
             { _, year, month, day ->
                 val newDate = Calendar.getInstance()
                 newDate.set(year, month, day)
@@ -197,6 +197,8 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         )
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.dark_gray))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.dark_gray))
     }
 
     private fun setTimeField(todoItem: TodoItem?) {
@@ -222,12 +224,14 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
 
             }
 
-        TimePickerDialog(
+        val timePicker = TimePickerDialog(
             requireContext(),
             timePickerListener,
             pickerHour, pickerMinute, true
-        ).show()
-
+        )
+        timePicker.show()
+        timePicker.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.light_blue))
+        timePicker.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.light_blue))
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")

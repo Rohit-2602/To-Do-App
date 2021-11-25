@@ -168,12 +168,14 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 setAlarm(alarmCalendar)
             }
 
-        TimePickerDialog(
+        val timePicker = TimePickerDialog(
             requireContext(),
             timePickerListener,
             pickerHour, pickerMinute, true
-        ).show()
-
+        )
+        timePicker.show()
+        timePicker.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.light_blue))
+        timePicker.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.light_blue))
     }
 
     @SuppressLint("SetTextI18n")
@@ -186,7 +188,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
         val mDay = DateFormat.format("dd", todoItem.dueDate).toString().toInt()
 
         val datePickerDialog = DatePickerDialog(
-            requireContext(),
+            requireContext(), R.style.MyDatePickerLight,
             { _, year, month, day ->
                 val newDate = Calendar.getInstance()
                 newDate.set(year, month, day)
@@ -203,6 +205,8 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
         )
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.dark_gray))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.dark_gray))
     }
 
     private fun setAlarm(calendar: Calendar) {
