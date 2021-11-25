@@ -19,4 +19,11 @@ object Util {
         return "$newDay/$monthNumber/$newYear"
     }
 
+    fun isTodoDateLessOrEqual(dueDate: Date): Boolean {
+        val calendar = Calendar.getInstance()
+        val alarm = Calendar.getInstance()
+        alarm.time = dueDate
+        return calendar.timeInMillis >= alarm.timeInMillis
+    }
+
 }

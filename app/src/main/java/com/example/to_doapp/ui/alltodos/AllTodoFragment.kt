@@ -85,7 +85,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                         allTodoViewModel.addTodo(todoItem)
                         setAlarm(todoItem)
                         todoTitle.setText("")
-                        dueDate = calendar.time
+                        dueDate = Calendar.getInstance().time
                         remainderTime = System.currentTimeMillis()
                     }
                     else {
@@ -245,8 +245,8 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
         intent.putExtra("todoTitle", todoItem.title)
         intent.putExtra("todoId", todoItem.id)
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id, intent, 0)
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")

@@ -1,5 +1,6 @@
 package com.example.to_doapp.ui.alltodos
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,14 @@ class AllTodoAdapter(private val listener: AddEditTask):
                 todoTimeTextview.text = Util.formatTime(todoItem.remainderTime)
                 todoCompletedCheckbox.isChecked = todoItem.completed
                 todoImportantCheckbox.isChecked = todoItem.important
+
+                // If todoItem remainderTime is less than actual time and date is equal (less isn't possible)
+                if (todoItem.remainderTime < todoItem.createdAt && Util.isTodoDateLessOrEqual(todoItem.dueDate)) {
+                    todoTimeTextview.setTextColor(Color.RED)
+                }
+                else {
+                    todoTimeTextview.setTextColor(Color.WHITE)
+                }
             }
         }
     }
