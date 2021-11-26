@@ -2,7 +2,6 @@ package com.example.to_doapp.db
 
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
-import java.util.*
 import javax.inject.Inject
 
 class TodoRepository @Inject constructor(private val todoDao: TodoDao) {
@@ -23,8 +22,11 @@ class TodoRepository @Inject constructor(private val todoDao: TodoDao) {
     suspend fun updateTodoTime(todoItemId: Int, remainderTime: Long) =
         todoDao.updateTodoTime(todoItemId, remainderTime)
 
-    suspend fun updateTodoDueDate(todoItemId: Int, dueDate: Date) =
+    suspend fun updateTodoDueDate(todoItemId: Int, dueDate: Long) =
         todoDao.updateTodoDueDate(todoItemId, dueDate)
+
+    suspend fun updateTodoDueDateTime(todoItemId: Int, dueDate: Long, remainderTime: Long) =
+        todoDao.updateTodoDueDateTime(todoItemId, dueDate, remainderTime)
 
     suspend fun removeTodo(todoItem: TodoItem) = todoDao.removeTodo(todoItem)
 

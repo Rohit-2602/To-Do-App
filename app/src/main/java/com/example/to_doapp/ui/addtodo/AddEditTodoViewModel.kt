@@ -10,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,8 +30,12 @@ class AddEditTodoViewModel @Inject constructor(private val todoRepository: TodoR
         todoRepository.updateTodoTime(todoItemId, remainderTime)
     }
 
-    fun updateTodoDueDate(todoItemId: Int, dueDate: Date) = viewModelScope.launch {
+    fun updateTodoDueDate(todoItemId: Int, dueDate: Long) = viewModelScope.launch {
         todoRepository.updateTodoDueDate(todoItemId, dueDate)
+    }
+
+    fun updateTodoDueDateTime(todoItemId: Int, dueDate: Long, remainderTime: Long) = viewModelScope.launch {
+        todoRepository.updateTodoDueDateTime(todoItemId, dueDate, remainderTime)
     }
 
     fun onTaskCheckedChanged(todoItem: TodoItem, position: Int, isChecked: Boolean, tasks: List<Task>) =

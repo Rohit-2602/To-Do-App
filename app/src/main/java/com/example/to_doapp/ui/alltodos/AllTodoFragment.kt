@@ -11,8 +11,8 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.Gravity
 import android.view.View
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -27,6 +27,7 @@ import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.FragmentAllTodoBinding
 import com.example.to_doapp.receiver.AlarmReceiver
+import com.example.to_doapp.utils.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +44,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
 
     private val calendar = Calendar.getInstance()
     private var alarmCalendar = Calendar.getInstance()
-    private var dueDate = calendar.time
+    private var dueDate = calendar.timeInMillis
     private var remainderTime = System.currentTimeMillis()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +86,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                         allTodoViewModel.addTodo(todoItem)
                         setAlarm(todoItem)
                         todoTitle.setText("")
-                        dueDate = Calendar.getInstance().time
+                        dueDate = Calendar.getInstance().timeInMillis
                         remainderTime = System.currentTimeMillis()
                     }
                     else {
@@ -97,7 +98,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                 setDueDate(null)
             }
             todoAlarm.setOnClickListener {
-                setTimeField(null)
+                setRemainderTime(null)
             }
             screen.setOnClickListener {
                 hideBottomSheet()
@@ -152,7 +153,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                     }
                     if (isEnabled) {
                         isEnabled = false
-                        requireActivity().onBackPressed()
+                        activity?.onBackPressed()
                     }
                 }
             }
@@ -184,10 +185,10 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                 val newDate = Calendar.getInstance()
                 newDate.set(year, month, day)
 
-                dueDate = Date(newDate.timeInMillis)
                 alarmCalendar.set(Calendar.YEAR, year)
                 alarmCalendar.set(Calendar.MONTH, month)
                 alarmCalendar.set(Calendar.DAY_OF_MONTH, day)
+                dueDate = alarmCalendar.timeInMillis
                 if (todoItem != null) {
                     allTodoViewModel.updateTodoDueDate(todoItem.id, dueDate)
                     setAlarm(todoItem)
@@ -197,18 +198,19 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         )
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
-        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.dark_gray))
-        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.dark_gray))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_gray))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_gray))
     }
 
-    private fun setTimeField(todoItem: TodoItem?) {
+    private fun setRemainderTime(todoItem: TodoItem?) {
 
         val mCalendar = Calendar.getInstance()
         var pickerHour = mCalendar.get(Calendar.HOUR_OF_DAY)
         var pickerMinute = mCalendar.get(Calendar.MINUTE)
         if (todoItem != null) {
-            pickerHour = todoItem.remainderTime.toInt() / 3600
-            pickerMinute = todoItem.remainderTime.toInt() - pickerHour * 3600
+            val formattedTime = Util.formatTimePicker(todoItem.remainderTime)
+            pickerHour = formattedTime.substring(0, 2).toInt()
+            pickerMinute = formattedTime.substring(3, 5).toInt()
         }
         val timePickerListener =
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
@@ -217,9 +219,13 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
                 alarmCalendar.set(Calendar.SECOND, 0)
 
                 remainderTime = alarmCalendar.timeInMillis
+                dueDate = alarmCalendar.timeInMillis
+
                 if (todoItem != null) {
-                    allTodoViewModel.updateTodoTime(todoItem.id, remainderTime)
-                    setAlarm(todoItem)
+                    allTodoViewModel.updateTodoDueDateTime(todoItem.id, dueDate, remainderTime)
+                    if (!todoItem.completed) {
+                        setAlarm(todoItem)
+                    }
                 }
 
             }
@@ -230,22 +236,22 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
             pickerHour, pickerMinute, true
         )
         timePicker.show()
-        timePicker.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.light_blue))
-        timePicker.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.light_blue))
+        timePicker.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.light_blue))
+        timePicker.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.light_blue))
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun setAlarm(todoItem: TodoItem) {
         val new = Calendar.getInstance()
         if (alarmCalendar.timeInMillis < new.timeInMillis) {
-            Toast.makeText(requireContext(), "Alarm Calendar Less", Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, "Set Correct Alarm Time", Snackbar.LENGTH_SHORT).show()
             return
         }
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
         intent.putExtra("todoTitle", todoItem.title)
-        intent.putExtra("todoId", todoItem.id)
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), System.currentTimeMillis().toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intentId = todoItem.createdAt
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), intentId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
     }
 
@@ -254,7 +260,8 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
         intent.putExtra("todoTitle", todoItem.title)
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id, intent, 0)
+        val intentId = todoItem.createdAt
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), intentId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
         alarmManager.cancel(pendingIntent)
     }
 
@@ -263,7 +270,7 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
     }
 
     override fun updateTodoTime(todoItem: TodoItem) {
-        setTimeField(todoItem)
+        setRemainderTime(todoItem)
     }
 
     override fun updateSubTaskCompletion(todoItem: TodoItem, position: Int, isChecked: Boolean) {
@@ -286,7 +293,12 @@ class AllTodoFragment : Fragment(R.layout.fragment_all_todo), AddEditTask {
 
     override fun completeTodo(todoItem: TodoItem, completed: Boolean) {
         allTodoViewModel.updateTodoChecked(todoItem.id, completed)
-        cancelAlarm(todoItem)
+        if (completed) {
+            cancelAlarm(todoItem)
+        }
+        else {
+            setAlarm(todoItem)
+        }
     }
 
     override fun importantTodo(todoItem: TodoItem, important: Boolean) {

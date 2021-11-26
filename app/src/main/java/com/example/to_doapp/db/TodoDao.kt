@@ -4,7 +4,6 @@ import androidx.room.*
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import kotlinx.coroutines.flow.Flow
-import java.util.*
 
 @Dao
 interface TodoDao {
@@ -31,7 +30,10 @@ interface TodoDao {
     suspend fun updateTodoTime(todoItemId: Int, remainderTime: Long)
 
     @Query("UPDATE todo_table SET dueDate = :dueDate WHERE id = :todoItemId")
-    suspend fun updateTodoDueDate(todoItemId: Int, dueDate: Date)
+    suspend fun updateTodoDueDate(todoItemId: Int, dueDate: Long)
+
+    @Query("UPDATE todo_table SET dueDate = :dueDate, remainderTime = :remainderTime WHERE id = :todoItemId")
+    suspend fun updateTodoDueDateTime(todoItemId: Int, dueDate: Long, remainderTime: Long)
 
     @Delete
     suspend fun removeTodo(todoItem: TodoItem)

@@ -12,6 +12,7 @@ import android.text.format.DateFormat
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
@@ -24,6 +25,7 @@ import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.FragmentAddTodoBinding
 import com.example.to_doapp.receiver.AlarmReceiver
 import com.example.to_doapp.utils.Util
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import kotlin.collections.ArrayList
@@ -40,8 +42,8 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
     private lateinit var todoItem: TodoItem
     val tasks: MutableList<Task> = ArrayList()
 
-    private lateinit var dueDate: Date
     private val alarmCalendar = Calendar.getInstance()
+    private var dueDate: Long = alarmCalendar.timeInMillis
 
     @SuppressLint("SetTextI18n", "InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,7 +54,7 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
         tasks.addAll(todoItem.tasks)
 
         dueDate = todoItem.dueDate
-        alarmCalendar.time = dueDate
+        alarmCalendar.timeInMillis = dueDate
 
         val mainActivity = activity as AppCompatActivity
         mainActivity.setSupportActionBar(binding.addTodoToolbar)
@@ -81,12 +83,12 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
 
             todoDate.setOnClickListener {
                 addTodoViewModel.updateTodoTasks(todoItem, tasks)
-                setDateField()
+                setDueDate()
             }
 
             todoTime.setOnClickListener {
                 addTodoViewModel.updateTodoTasks(todoItem, tasks)
-                setTimeField()
+                setRemainderTime()
             }
 
             backButton.setOnClickListener {
@@ -150,10 +152,11 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
         addTodoViewModel.updateTodoTasks(todoItem, subTasks)
     }
 
-    private fun setTimeField() {
+    private fun setRemainderTime() {
 
-        val pickerHour = todoItem.remainderTime.toInt() / 3600
-        val pickerMinute = todoItem.remainderTime.toInt() - pickerHour * 3600
+        val formattedTime = Util.formatTimePicker(todoItem.remainderTime)
+        val pickerHour = formattedTime.substring(0, 2).toInt()
+        val pickerMinute = formattedTime.substring(3, 5).toInt()
 
         val timePickerListener =
             TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
@@ -162,9 +165,10 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 alarmCalendar.set(Calendar.SECOND, 0)
 
                 todoItem.remainderTime = alarmCalendar.timeInMillis
+                dueDate = alarmCalendar.timeInMillis
 
                 binding.todoTimeTextview.text = Util.formatTime(todoItem.remainderTime)
-                addTodoViewModel.updateTodoTime(todoItem.id, todoItem.remainderTime)
+                addTodoViewModel.updateTodoDueDateTime(todoItem.id, dueDate, todoItem.remainderTime)
                 setAlarm(alarmCalendar)
             }
 
@@ -174,12 +178,12 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
             pickerHour, pickerMinute, true
         )
         timePicker.show()
-        timePicker.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.light_blue))
-        timePicker.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.light_blue))
+        timePicker.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.light_blue))
+        timePicker.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.light_blue))
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setDateField() {
+    private fun setDueDate() {
 
         val calendar = Calendar.getInstance()
 
@@ -193,10 +197,11 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
                 val newDate = Calendar.getInstance()
                 newDate.set(year, month, day)
 
-                dueDate = Date(newDate.timeInMillis)
                 alarmCalendar.set(Calendar.YEAR, year)
                 alarmCalendar.set(Calendar.MONTH, month)
                 alarmCalendar.set(Calendar.DAY_OF_MONTH, day)
+
+                dueDate = alarmCalendar.timeInMillis
 
                 binding.todoDateTextview.text = Util.formatDate(dueDate = dueDate)
                 addTodoViewModel.updateTodoDueDate(todoItem.id, dueDate)
@@ -205,15 +210,22 @@ class AddEditTodoFragment : Fragment(R.layout.fragment_add_todo), OnTaskChanged 
         )
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
-        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.dark_gray))
-        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.dark_gray))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_gray))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_gray))
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun setAlarm(calendar: Calendar) {
+        val new = Calendar.getInstance()
+        if (alarmCalendar.timeInMillis < new.timeInMillis) {
+            Snackbar.make(binding.root, "Set Correct Alarm Time", Snackbar.LENGTH_SHORT).show()
+            return
+        }
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireContext(), AlarmReceiver::class.java)
         intent.putExtra("todoTitle", todoItem.title)
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), todoItem.id, intent, 0)
+        val intentId = todoItem.createdAt
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), intentId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
 

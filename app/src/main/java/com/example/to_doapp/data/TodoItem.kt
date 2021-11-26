@@ -15,7 +15,7 @@ data class TodoItem(
     var title: String? = "",
     var createdAt: Long = System.currentTimeMillis(),
     var tasks: MutableList<Task> = ArrayList(),
-    var dueDate: Date = Calendar.getInstance().time,
+    var dueDate: Long = Calendar.getInstance().timeInMillis,
     var remainderTime: Long = System.currentTimeMillis(),
     var completed: Boolean = false,
     var important: Boolean = false

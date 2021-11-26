@@ -28,7 +28,7 @@ class AllTodoAdapter(private val listener: AddEditTask):
                 todoImportantCheckbox.isChecked = todoItem.important
 
                 // If todoItem remainderTime is less than actual time and date is equal (less isn't possible)
-                if (todoItem.remainderTime < todoItem.createdAt && Util.isTodoDateLessOrEqual(todoItem.dueDate)) {
+                if (Util.isTodoDateLessOrEqual(todoItem.dueDate)) {
                     todoTimeTextview.setTextColor(Color.RED)
                 }
                 else {
