@@ -7,6 +7,9 @@
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/layout/fragment_add_task.xml" value="0.23854166666666668" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/layout/fragment_add_todo.xml" value="0.23854166666666668" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/layout/fragment_all_todo.xml" value="0.25416666666666665" />
+        <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/layout/fragment_edit_todo.xml" value="0.264" />
+        <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/layout/item_edit_sub_task.xml" value="0.25416666666666665" />
+        <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/layout/item_sub_task.xml" value="0.25416666666666665" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/layout/item_task.xml" value="0.23854166666666668" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/layout/item_todo.xml" value="0.23854166666666668" />
       </map>

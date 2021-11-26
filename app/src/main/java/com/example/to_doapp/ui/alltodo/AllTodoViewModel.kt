@@ -1,4 +1,4 @@
-package com.example.to_doapp.ui.alltodos
+package com.example.to_doapp.ui.alltodo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -52,17 +52,17 @@ class AllTodoViewModel @Inject constructor(private val todoRepository: TodoRepos
         todoRepository.updateTodoDueDateTime(todoItemId, dueDate, remainderTime)
     }
 
-    fun updateTodoChecked(todoItemId: Int, completed: Boolean) =
+    fun updateTodoCompletion(todoItemId: Int, completed: Boolean) =
         viewModelScope.launch {
             todoRepository.updateTodoChecked(todoItemId, completed)
         }
 
-    fun updateTodoImportant(todoItemId: Int, important: Boolean) =
+    fun updateTodoImportance(todoItemId: Int, important: Boolean) =
         viewModelScope.launch {
             todoRepository.updateTodoImportant(todoItemId, important)
         }
 
-    fun onTaskCheckedChanged(todoItem: TodoItem, position: Int, isChecked: Boolean) =
+    fun updateSubTaskCompletion(todoItem: TodoItem, position: Int, isChecked: Boolean) =
         viewModelScope.launch {
             val tasks = todoItem.tasks
             tasks[position].isCompleted = isChecked

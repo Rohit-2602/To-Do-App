@@ -1,4 +1,4 @@
-package com.example.to_doapp.ui.addtodo
+package com.example.to_doapp.ui.editTodo
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.to_doapp.R
 import com.example.to_doapp.data.Task
-import com.example.to_doapp.databinding.ItemAddSubTaskBinding
+import com.example.to_doapp.databinding.ItemEditSubTaskBinding
 import com.example.to_doapp.utils.Comparators.SUBTASK_COMPARATOR
 
-class AddTodoAdapter(private val listener: OnTaskChanged) :
-    ListAdapter<Task, AddTodoAdapter.AddTodoViewHolder>(SUBTASK_COMPARATOR) {
+class EditSubTaskAdapter(private val listener: OnTaskChanged) :
+    ListAdapter<Task, EditSubTaskAdapter.EditSubTaskViewHolder>(SUBTASK_COMPARATOR) {
 
-    inner class AddTodoViewHolder(private val binding: ItemAddSubTaskBinding) :
+    inner class EditSubTaskViewHolder(private val binding: ItemEditSubTaskBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindSubTask(subTask: Task) {
             binding.apply {
@@ -25,13 +25,13 @@ class AddTodoAdapter(private val listener: OnTaskChanged) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddTodoViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EditSubTaskViewHolder {
         val binding =
-            ItemAddSubTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        val addTodoViewHolder = AddTodoViewHolder(binding)
+            ItemEditSubTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val addTodoViewHolder = EditSubTaskViewHolder(binding)
         binding.apply {
             subTaskCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                listener.onCompletedChanged(addTodoViewHolder.adapterPosition, isChecked)
+                listener.updateSubTaskCompletion(addTodoViewHolder.adapterPosition, isChecked)
             }
             subTaskTitle.setOnFocusChangeListener { _, focused ->
                 if (focused) {
@@ -52,21 +52,21 @@ class AddTodoAdapter(private val listener: OnTaskChanged) :
                     currentList[addTodoViewHolder.adapterPosition].title = newText.toString()
                 }
                 override fun afterTextChanged(newText: Editable?) {
-                    listener.onTitleChanged(addTodoViewHolder.adapterPosition, newText.toString())
+                    listener.onSubTaskTitleChanged(addTodoViewHolder.adapterPosition, newText.toString())
                 }
             })
         }
         return addTodoViewHolder
     }
 
-    override fun onBindViewHolder(holder: AddTodoViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: EditSubTaskViewHolder, position: Int) {
         val item = getItem(position)
         holder.bindSubTask(item)
     }
 }
 
 interface OnTaskChanged {
-    fun onTitleChanged(position: Int, newTitle: String)
-    fun onCompletedChanged(position: Int, isCompleted: Boolean)
+    fun onSubTaskTitleChanged(position: Int, newTitle: String)
+    fun updateSubTaskCompletion(position: Int, isCompleted: Boolean)
     fun removeSubTask(position: Int)
 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_black"
-    tools:context=".ui.alltodos.AllTodoFragment">
+    tools:context=".ui.alltodo.AllTodoFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

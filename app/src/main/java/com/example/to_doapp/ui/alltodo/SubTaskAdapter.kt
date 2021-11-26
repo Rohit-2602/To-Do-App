@@ -1,16 +1,16 @@
-package com.example.to_doapp.ui.alltodos
+package com.example.to_doapp.ui.alltodo
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
-import com.example.to_doapp.databinding.ItemTaskBinding
+import com.example.to_doapp.databinding.ItemSubTaskBinding
 
 class SubTaskAdapter(private val todoItem: TodoItem, private val listener: AddEditTask) :
     RecyclerView.Adapter<SubTaskAdapter.SubTaskViewHolder>() {
 
-    inner class SubTaskViewHolder(private val binding: ItemTaskBinding) :
+    inner class SubTaskViewHolder(private val binding: ItemSubTaskBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindSubTask(subTask: Task) {
             binding.apply {
@@ -22,7 +22,7 @@ class SubTaskAdapter(private val todoItem: TodoItem, private val listener: AddEd
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubTaskViewHolder {
-        val binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemSubTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val subTaskViewHolder = SubTaskViewHolder(binding)
         binding.taskTitle.setOnClickListener {
             listener.updateSubTaskCompletion(todoItem, subTaskViewHolder.adapterPosition, binding.taskTitle.isChecked)

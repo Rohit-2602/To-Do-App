@@ -1,4 +1,4 @@
-package com.example.to_doapp.ui.alltodos
+package com.example.to_doapp.ui.alltodo
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -13,8 +13,8 @@ import com.example.to_doapp.databinding.ItemTodoBinding
 import com.example.to_doapp.utils.Comparators
 import com.example.to_doapp.utils.Util
 
-class AllTodoAdapter(private val listener: AddEditTask):
-    ListAdapter<TodoItem, AllTodoAdapter.TodoViewHolder>(Comparators.TODO_COMPARATOR) {
+class TodoAdapter(private val listener: AddEditTask):
+    ListAdapter<TodoItem, TodoAdapter.TodoViewHolder>(Comparators.TODO_COMPARATOR) {
 
     private var subTaskAdapter: SubTaskAdapter?= null
 
@@ -46,10 +46,10 @@ class AllTodoAdapter(private val listener: AddEditTask):
             listener.editTodo(getItem(addTodoViewHolder.adapterPosition))
         }
         binding.todoCompletedCheckbox.setOnCheckedChangeListener { _, checked ->
-            listener.completeTodo(getItem(addTodoViewHolder.adapterPosition), checked)
+            listener.updateTodoCompletion(getItem(addTodoViewHolder.adapterPosition), checked)
         }
         binding.todoImportantCheckbox.setOnCheckedChangeListener { _, checked ->
-            listener.importantTodo(getItem(addTodoViewHolder.adapterPosition), checked)
+            listener.updateTodoImportance(getItem(addTodoViewHolder.adapterPosition), checked)
         }
         binding.todoConstraint.setOnClickListener {
             val visibility = (binding.subTaskRecyclerview.visibility == View.VISIBLE)
@@ -86,8 +86,8 @@ interface AddEditTask {
     fun updateSubTaskCompletion(todoItem: TodoItem, position: Int, isChecked: Boolean)
     fun removeSubTask(todoItemId: Int, tasks: List<Task>)
     fun removeTodo(todoItem: TodoItem)
-    fun completeTodo(todoItem: TodoItem, completed: Boolean)
-    fun importantTodo(todoItem: TodoItem, important: Boolean)
+    fun updateTodoCompletion(todoItem: TodoItem, completed: Boolean)
+    fun updateTodoImportance(todoItem: TodoItem, important: Boolean)
     fun updateTodoDate(todoItem: TodoItem)
     fun updateTodoTime(todoItem: TodoItem)
 }

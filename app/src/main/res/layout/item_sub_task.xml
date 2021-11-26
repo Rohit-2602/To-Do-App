@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="15dp">
+    android:paddingTop="15dp"
+    tools:background="@color/dark_gray">
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/task_title"

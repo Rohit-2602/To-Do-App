@@ -111,7 +111,7 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/todo_time_textview"
-            tools:listitem="@layout/item_task" />
+            tools:listitem="@layout/item_sub_task" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
