@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
-    android:background="@color/dark_gray"
+    android:background="@color/secondary_background"
     android:layout_height="wrap_content">
 
     <CheckBox
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:minWidth="0dp"
         android:minHeight="0dp"
-        android:buttonTint="@color/white"
+        android:buttonTint="@color/icon_color"
         style="@style/TodoCompletedCheckbox"
         android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -30,7 +30,7 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textSize="18sp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:background="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/sub_task_sort"
         app:layout_constraintStart_toEndOf="@+id/sub_task_checkbox"

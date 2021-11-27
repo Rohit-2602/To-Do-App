@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="MyTimePicker" parent="android:Widget.Material.TimePicker">
+        <item name="android:headerBackground">@color/timePickerHeader</item>
+        <item name="android:numbersTextColor">@color/timePickerNumberText</item>
+        <item name="android:numbersSelectorColor">@color/timePickerNumberSelected</item>
+        <item name="android:numbersBackgroundColor">@color/timePickerNumberBackground</item>
+        <item name="android:background">@color/timePickerBackground</item>
+        <item name="android:numbersInnerTextColor" tools:ignore="NewApi">
+            @color/timePickerNumberInnerText
+        </item>
+    </style>
+
+    <style name="MyDatePicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/datePickerAccent</item>
+        <item name="android:textColor">@color/datePickerTextColor</item>
+        <item name="android:colorControlActivated">@color/datePickerActivated</item>
+        <item name="android:textColorSecondary">@color/datePickerTextSecondary</item>
+        <item name="android:windowBackground">@color/datePickerWindowBackground</item>
+        <item name="android:textColorPrimary">@color/datePickerTextPrimary</item>
+    </style>
+
+    <style name="TodoCompletedCheckbox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/selector_checkbox</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="TodoImportantCheckbox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/selector_important</item>
+    </style>
+
+</resources>

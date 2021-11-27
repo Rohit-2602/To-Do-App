@@ -3,7 +3,7 @@
     <style name="Theme.ToDoApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/light_blue</item>
-        <item name="colorPrimaryVariant">@color/light_black</item>
+        <item name="colorPrimaryVariant">@color/background</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/light_blue</item>
@@ -12,32 +12,9 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/gray</item>
-        <item name="android:timePickerStyle">@style/MyTimePickerLight</item>
-    </style>
-
-    <style name="MyTimePickerLight" parent="android:Widget.Material.TimePicker">
-        <item name="android:headerBackground">@color/dark_gray</item>
-        <item name="android:numbersTextColor">@color/white</item>
-        <item name="android:numbersSelectorColor">@color/light_blue</item>
-        <item name="android:numbersBackgroundColor">@color/light_black</item>
-        <item name="android:background">@color/light_black</item>
-        <item name="android:numbersInnerTextColor" tools:ignore="NewApi">@color/white</item>
-    </style>
-
-    <style name="MyDatePickerLight" parent="Theme.AppCompat.Light.Dialog">
-        <item name="colorAccent">@color/dark_gray</item>
         <item name="android:textColorPrimary">@color/black</item>
-    </style>
-
-    <style name="TodoCompletedCheckbox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/selector_checkbox</item>
-        <item name="android:background">@android:color/transparent</item>
-    </style>
-
-    <style name="TodoImportantCheckbox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/selector_important</item>
+        <item name="android:textColorSecondary">@color/gray</item>
+        <item name="android:timePickerStyle">@style/MyTimePicker</item>
     </style>
 
 </resources>

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.to_doapp.R
 import com.example.to_doapp.data.Task
 import com.example.to_doapp.data.TodoItem
 import com.example.to_doapp.databinding.ItemTodoBinding
@@ -29,7 +30,7 @@ class TodoAdapter(private val listener: AddEditTask):
 
                 // If todoItem remainderTime is less than actual time and date is equal (less isn't possible)
                 if (Util.isTodoDateLessOrEqual(todoItem.dueDate)) {
-                    todoTimeTextview.setTextColor(Color.RED)
+                    todoTimeTextview.setTextColor(binding.root.context.resources.getColor(R.color.red))
                 }
                 else {
                     todoTimeTextview.setTextColor(Color.WHITE)

@@ -60,13 +60,13 @@ object Util {
             mMonth = DateFormat.format("MM", todoItem.dueDate).toString().toInt()-1
             mDay = DateFormat.format("dd", todoItem.dueDate).toString().toInt()
         }
-        val datePickerDialog = DatePickerDialog(context, R.style.MyDatePickerLight,
+        val datePickerDialog = DatePickerDialog(context, R.style.MyDatePicker,
             datePickerListener, mYear, mMonth, mDay
         )
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
-        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(context, R.color.dark_gray))
-        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.dark_gray))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(context, R.color.light_blue))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.light_blue))
     }
 
     fun showTimePicker(todoItem: TodoItem?, context: Context, timePickerListener: TimePickerDialog.OnTimeSetListener) {

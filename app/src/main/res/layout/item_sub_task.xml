@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="15dp"
-    tools:background="@color/dark_gray">
+    tools:background="@color/secondary_background">
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/task_title"
@@ -16,9 +16,9 @@
         android:minHeight="0dp"
         android:minWidth="0dp"
         android:paddingLeft="10dp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:textSize="16sp"
-        android:buttonTint="@color/white"
+        android:buttonTint="@color/icon_color"
         style="@style/TodoCompletedCheckbox"
         app:layout_constraintEnd_toStartOf="@+id/task_remove"
         app:layout_constraintStart_toStartOf="parent"

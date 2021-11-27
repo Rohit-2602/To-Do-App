@@ -9,28 +9,28 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="toolbar_color">#FF000000</color>
-    <color name="background">#ffffff</color>
-    <color name="secondary_background">#f3f4f4</color>
-    <color name="text_color">#FF000000</color>
-    <color name="text_color_secondary">#777b7c</color>
-    <color name="icon_color">#FF000000</color>
+    <color name="background">#191A1C</color>
+    <color name="secondary_background">#303136</color>
+    <color name="text_color">#FFFFFFFF</color>
+    <color name="text_color_secondary">#FFFFFFFF</color>
+    <color name="icon_color">#FFFFFFFF</color>
     <color name="light_blue">#FF2F7AF8</color>
     <color name="gray">#A0A0A0</color>
     <color name="button_color">#3f3f3f</color>
-    <color name="red">#C13131</color>
+    <color name="red">#FF0000</color>
 
-    <color name="timePickerHeader">#FF2F7AF8</color>
-    <color name="timePickerBackground">#ffffff</color>
-    <color name="timePickerNumberText">#FF000000</color>
+    <color name="timePickerHeader">#303136</color>
+    <color name="timePickerBackground">#191A1C</color>
+    <color name="timePickerNumberText">#FFFFFFFF</color>
     <color name="timePickerNumberSelected">#FF2F7AF8</color>
-    <color name="timePickerNumberBackground">#ffffff</color>
-    <color name="timePickerNumberInnerText">#FF000000</color>
+    <color name="timePickerNumberBackground">#191A1C</color>
+    <color name="timePickerNumberInnerText">#FFFFFFFF</color>
 
-    <color name="datePickerWindowBackground">#ffffff</color>
-    <color name="datePickerAccent">#FF2F7AF8</color>
+    <color name="datePickerWindowBackground">#191A1C</color>
+    <color name="datePickerAccent">#303136</color>
     <color name="datePickerActivated">#FF2F7AF8</color>
     <color name="datePickerTextColor">#A0A0A0</color>
-    <color name="datePickerTextPrimary">#FF000000</color>
+    <color name="datePickerTextPrimary">#FFFFFFFF</color>
     <color name="datePickerTextSecondary">#A0A0A0</color>
 
 </resources>

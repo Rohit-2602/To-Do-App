@@ -3,27 +3,16 @@
     <style name="Theme.ToDoApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">@color/light_black</item>
+        <item name="colorPrimaryVariant">@color/background</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/light_blue</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/gray</item>
-        <item name="android:timePickerStyle">@style/MyTimePickerDark</item>
-    </style>
-
-    <style name="MyTimePickerDark" parent="android:Widget.Material.TimePicker">
-        <item name="android:headerBackground">@color/light_black</item>
-        <item name="android:numbersTextColor">@color/white</item>
-        <item name="android:numbersSelectorColor">@color/light_blue</item>
-        <item name="android:numbersBackgroundColor">@color/light_black</item>
-        <item name="android:background">@color/light_black</item>
-        <item name="android:numbersInnerTextColor" tools:ignore="NewApi">@color/white</item>
+        <item name="android:timePickerStyle">@style/MyTimePicker</item>
     </style>
 
 </resources>

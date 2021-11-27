@@ -51,9 +51,12 @@ class EditTodoFragment : Fragment(R.layout.fragment_edit_todo), OnTaskChanged {
 
         editTodoViewModel.getTodoById(todoItem.id).asLiveData().observe(viewLifecycleOwner) {
             todoItem = it
-            editSubTaskAdapter.submitList(it.tasks)
             tasks.clear()
             tasks.addAll(it.tasks)
+        }
+
+        editTodoViewModel.getTodoList(todoItem.id).observe(viewLifecycleOwner) {
+            editSubTaskAdapter.submitList(it)
         }
 
         binding.apply {
@@ -118,7 +121,8 @@ class EditTodoFragment : Fragment(R.layout.fragment_edit_todo), OnTaskChanged {
     }
 
     override fun updateSubTaskCompletion(position: Int, isCompleted: Boolean) {
-        editTodoViewModel.updateSubTaskCompletion(todoItem.id, position, isCompleted, tasks)
+        tasks[position].isCompleted = isCompleted
+        editTodoViewModel.updateTodoTasks(todoItem.id, tasks)
     }
 
     override fun removeSubTask(position: Int) {
