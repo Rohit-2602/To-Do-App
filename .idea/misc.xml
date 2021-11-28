@@ -4,8 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/drawable/ic_add.xml" value="0.2484375" />
+        <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/drawable/ic_back.xml" value="0.2703125" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/drawable/ic_calendar.xml" value="0.2484375" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/drawable/ic_clock.xml" value="0.2484375" />
+        <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/drawable/ic_close.xml" value="0.2703125" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/drawable/ic_edit.xml" value="0.20833333333333334" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/drawable/ic_remove.xml" value="0.2484375" />
         <entry key="..\:/Android_Projects/ToDoApp/app/src/main/res/drawable/ic_sort.xml" value="0.2484375" />

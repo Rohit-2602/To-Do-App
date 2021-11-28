@@ -97,7 +97,7 @@
         android:drawableLeft="@drawable/ic_add"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:textColor="@color/text_color"
+        android:textColor="@color/white"
         android:text="@string/add_task"
         android:textAllCaps="false"
         app:cornerRadius="50dp"

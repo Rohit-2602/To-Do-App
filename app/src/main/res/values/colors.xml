@@ -8,15 +8,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="toolbar_color">#FF000000</color>
-    <color name="background">#ffffff</color>
-    <color name="secondary_background">#f3f4f4</color>
-    <color name="text_color">#FF000000</color>
+    <color name="toolbar_color">#f5f5f5</color>
+    <color name="background">#f5f5f5</color>
+    <color name="secondary_background">#ffffff</color>
+    <color name="text_color">#ff403b58</color>
     <color name="text_color_secondary">#777b7c</color>
-    <color name="icon_color">#FF000000</color>
+    <color name="icon_color">#ff403b58</color>
     <color name="light_blue">#FF2F7AF8</color>
     <color name="gray">#A0A0A0</color>
-    <color name="button_color">#3f3f3f</color>
+    <color name="button_color">#403b58</color>
     <color name="red">#C13131</color>
 
     <color name="timePickerHeader">#FF2F7AF8</color>
